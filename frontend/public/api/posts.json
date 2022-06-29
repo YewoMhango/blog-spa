@@ -1,0 +1,30 @@
+[
+  {
+    "title": "My First Post",
+    "synopsis": "Introducing you to my new blog",
+    "date": "20 June 2022",
+    "url": "/post/my-first-post/",
+    "thumbnail": "/images/fabien-twb.jpg"
+  },
+  {
+    "title": "My Second Post",
+    "synopsis": "Explaining the purpose of new blog",
+    "date": "20 June 2022",
+    "url": "/post/my-second-post/",
+    "thumbnail": "/images/helen-ngoc.jpg"
+  },
+  {
+    "title": "My First Post",
+    "synopsis": "Introducing you to my new blog",
+    "date": "20 June 2022",
+    "url": "/post/my-first-post/",
+    "thumbnail": "/images/fabien-twb.jpg"
+  },
+  {
+    "title": "My Second Post",
+    "synopsis": "Explaining the purpose of new blog",
+    "date": "20 June 2022",
+    "url": "/post/my-second-post/",
+    "thumbnail": "/images/helen-ngoc.jpg"
+  }
+]
