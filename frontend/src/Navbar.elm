@@ -55,7 +55,7 @@ view model toMsg =
         ]
         [ aside [ class "shader", onClick (toMsg ToggleMenu) ] []
         , button [ class "menu-button", onClick (toMsg ToggleMenu) ] [ div [] [], div [] [] ]
-        , a [ class "logo", href "/" ] [ img [ src "/logo.svg" ] [] ]
+        , a [ class "logo", href "/" ] [ img [ src "/static/logo.svg" ] [] ]
         , div [ class "nav-right" ]
             [ ol [ class "nav-links", type_ "none" ]
                 [ li [] [ a [ href "/" ] [ text "Home" ] ]
