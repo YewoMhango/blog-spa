@@ -13,9 +13,9 @@ import Maybe exposing (Maybe)
 import Navbar
 import Page
 import Request
-import Shared
+import Shared exposing (CSRFToken)
 import Task
-import Utils exposing (flipBool)
+import Utils exposing (flipBool, httpErrorAsText)
 import View exposing (View)
 
 
@@ -24,10 +24,10 @@ import View exposing (View)
 
 
 page : Shared.Model -> Request.With Params -> Page.With Model Msg
-page _ req =
+page sharedModel req =
     Page.element
         { view = view
-        , init = init
+        , init = init sharedModel.csrfToken
         , update = update req
         , subscriptions = subscriptions
         }
@@ -47,6 +47,7 @@ type alias Model =
     , postContent : String
     , currentTab : Tab
     , publishStatus : PublishStatus
+    , csrfToken : CSRFToken
     }
 
 
@@ -56,9 +57,9 @@ type PublishStatus
     | GotResponse (Result Http.Error String)
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( Model Navbar.init "" "" "" Nothing "" "" Input Writing
+init : CSRFToken ->  ( Model, Cmd Msg )
+init csrfToken =
+    ( Model Navbar.init "" "" "" Nothing "" "" Input Writing csrfToken
     , Cmd.none
     )
 
@@ -140,7 +141,8 @@ update req msg model =
                         { url = "/api/publish"
                         , body =
                             Http.multipartBody
-                                [ Http.stringPart "title" model.title
+                                [ Http.stringPart "csrfmiddlewaretoken" model.csrfToken
+                                , Http.stringPart "title" model.title
                                 , Http.stringPart "summary" model.summary
                                 , Http.stringPart "userName" model.userName
                                 , Http.stringPart "postContent" model.postContent
@@ -255,6 +257,12 @@ viewWriter model =
                         model.postContent
                     ]
                 ]
+            , div [class "uploading-errors"] 
+                [ text (
+                    case model.publishStatus of 
+                        GotResponse (Err error) -> httpErrorAsText error
+                        _ -> ""
+                )]
             , div [ class "publish-button-container" ]
                 [ button [ disabled (isPublishable model |> flipBool), onClick PublishPost ]
                     [ text <|
