@@ -46,11 +46,11 @@ type alias Model =
 
 type alias Post =
     { title : String
-    , synopsis : String
+    , summary : String
     , author : String
     , date : String
     , content : String
-    , thumbnail : String
+    , image : String
     , views : Int
     }
 
@@ -86,7 +86,7 @@ update msg model =
 getPost : String -> Cmd Msg
 getPost postSLug =
     Http.get
-        { url = "/api/post/" ++ postSLug ++ ".json"
+        { url = "/api/post/" ++ postSLug
         , expect = Http.expectJson GotPosts postDecoder
         }
 
@@ -95,11 +95,11 @@ postDecoder : Decoder Post
 postDecoder =
     map7 Post
         (field "title" string)
-        (field "synopsis" string)
+        (field "summary" string)
         (field "author" string)
         (field "date" string)
         (field "content" string)
-        (field "thumbnail" string)
+        (field "image" string)
         (field "views" int)
 
 
@@ -151,7 +151,7 @@ viewPost postsData =
                         [ header []
                             [ div [ class "container" ]
                                 [ h1 [] [ text post.title ]
-                                , div [ class "synopsis" ] [ text post.synopsis ]
+                                , div [ class "summary" ] [ text post.summary ]
                                 , div [ class "details" ]
                                     [ text
                                         (post.author
@@ -177,7 +177,7 @@ postLoadingAnimation =
     [ div [ class "header loading-animation" ]
         [ div [ class "container" ]
             [ h1 [ class "line" ] []
-            , div [ class "synopsis line" ] []
+            , div [ class "summary line" ] []
             , div [ class "details line" ]
                 []
             ]

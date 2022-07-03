@@ -27,26 +27,28 @@ type RemoteData data error
 renderHttpError : Http.Error -> Html msg
 renderHttpError error =
     div [ class "loading-error" ]
-        [ text
-            (case error of
-                Http.Timeout ->
-                    "The request timed-out"
+        [ text <| httpErrorAsText error]
 
-                Http.BadUrl details ->
-                    "Bad URL used: " ++ details
+httpErrorAsText: Http.Error -> String 
+httpErrorAsText error = 
+    (case error of
+        Http.Timeout ->
+            "The request timed-out"
 
-                Http.NetworkError ->
-                    "A network error occured"
+        Http.BadUrl details ->
+            "Bad URL used: " ++ details
 
-                Http.BadStatus statusCode ->
-                    case statusCode of
-                        404 ->
-                            "404 error: The resouce was not found"
+        Http.NetworkError ->
+            "A network error occured"
 
-                        _ ->
-                            "Bad status code returned when fetching data: " ++ String.fromInt statusCode
+        Http.BadStatus statusCode ->
+            case statusCode of
+                404 ->
+                    "404 error: The resouce was not found"
 
-                Http.BadBody details ->
-                    "Error - Bad response body returned: " ++ details
-            )
-        ]
+                _ ->
+                    "Bad status code returned when fetching data: " ++ String.fromInt statusCode
+
+        Http.BadBody details ->
+            "Error - Bad response body returned: " ++ details
+    )
