@@ -1,4 +1,4 @@
-"""blog URL Configuration
+"""app URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.0/topics/http/urls/
@@ -13,12 +13,22 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
 from django.urls import include, path
+from rest_framework import routers
 
-from app import views as app_views
+from . import views
+
+
+# router = routers.DefaultRouter()
+# router.register('hospitals', views.HospitalsViewSet)
+# router.register('diseases', views.DiseaseTypesViewSet)
+# router.register('disease_types', views.DiseaseTypesViewSet)
+
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('app.urls')),
+    # path('', include(router.urls)),
+    path('api/posts', views.BlogsListView.as_view(), name="posts"),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('', views.index, {'resource': ''}, name='index'),
+    path('<path:resource>', views.index, name='index')
 ]
