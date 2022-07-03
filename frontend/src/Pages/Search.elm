@@ -7,10 +7,10 @@ import Http
 import Json.Decode exposing (Decoder, field, list, map5, string)
 import Navbar
 import Page
-import Pages.Home_ exposing (postsLoadingAnimation, renderPosts)
+import Pages.Home_ exposing (PostDetails, renderPostsData)
 import Request exposing (Request)
 import Shared
-import Utils exposing (RemoteData(..), renderHttpError)
+import Utils exposing (RemoteData(..))
 import View exposing (View)
 
 
@@ -43,15 +43,6 @@ type alias Model =
 type alias QueryParams =
     { searchTerm : Maybe String
     , page : Maybe Int
-    }
-
-
-type alias PostDetails =
-    { title : String
-    , synopsis : String
-    , date : String
-    , url : String
-    , thumbnail : String
     }
 
 
@@ -95,7 +86,7 @@ getPosts : String -> Cmd Msg
 getPosts query =
     Http.get
         { --
-          url = "/api/search?" ++ query
+          url = "/api/posts?" ++ query
         , expect = Http.expectJson GotPosts postsDecoder
         }
 
@@ -105,7 +96,7 @@ postsDecoder =
     list
         (map5 PostDetails
             (field "title" string)
-            (field "synopsis" string)
+            (field "summary" string)
             (field "date" string)
             (field "url" string)
             (field "thumbnail" string)
@@ -173,20 +164,13 @@ viewPosts model =
                             ++ term
                             ++ "\""
                     ]
-                , case model.posts of
-                    Loading ->
-                        div [ class "post-list" ] <|
-                            List.repeat 8 postsLoadingAnimation
-
-                    RequestDone result ->
-                        case result of
-                            Ok posts ->
-                                div [ class "post-list" ] <|
-                                    renderPosts posts
-
-                            Err error ->
-                                renderHttpError error
+                , renderPostsData model.posts noResults
                 ]
 
         Nothing ->
             div [ class "no-search-term" ] [ p [] [ text "You can search for a post at the top-right corner of this window" ] ]
+
+
+noResults : Html msg
+noResults =
+    div [ class "no-posts-to-show" ] [ p [] [ text "No posts match your search" ] ]

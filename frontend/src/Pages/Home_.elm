@@ -1,6 +1,6 @@
-module Pages.Home_ exposing (Model, Msg, page, postsLoadingAnimation, renderPosts)
+module Pages.Home_ exposing (Model, Msg, PostDetails, page, postsLoadingAnimation, renderPosts, renderPostsData)
 
-import Html exposing (Html, a, div, h1, img, main_, text)
+import Html exposing (Html, a, div, h1, img, main_, p, text)
 import Html.Attributes exposing (class, href, src)
 import Http
 import Json.Decode exposing (Decoder, field, list, map5, string)
@@ -39,7 +39,7 @@ type alias Model =
 
 type alias PostDetails =
     { title : String
-    , synopsis : String
+    , summary : String
     , date : String
     , url : String
     , thumbnail : String
@@ -77,7 +77,7 @@ update msg model =
 getPosts : Cmd Msg
 getPosts =
     Http.get
-        { url = "/api/posts.json"
+        { url = "/api/posts"
         , expect = Http.expectJson GotPosts postsDecoder
         }
 
@@ -87,7 +87,7 @@ postsDecoder =
     list
         (map5 PostDetails
             (field "title" string)
-            (field "synopsis" string)
+            (field "summary" string)
             (field "date" string)
             (field "url" string)
             (field "thumbnail" string)
@@ -120,19 +120,7 @@ view model =
 viewPosts : RemoteData (List PostDetails) Http.Error -> Html Msg
 viewPosts postsData =
     main_ [ class "homepage" ]
-        [ case postsData of
-            Loading ->
-                div [ class "post-list" ] <|
-                    List.repeat 8 postsLoadingAnimation
-
-            RequestDone result ->
-                case result of
-                    Ok posts ->
-                        div [ class "post-list" ] <|
-                            renderPosts posts
-
-                    Err error ->
-                        renderHttpError error
+        [ renderPostsData postsData noPostsToShow
         ]
 
 
@@ -142,12 +130,38 @@ postsLoadingAnimation =
         [ div [ class "thumbnail image" ] []
         , div [ class "date line" ] []
         , div [ class "title line" ] []
-        , div [ class "synopsis" ]
+        , div [ class "summary" ]
             [ div [ class "line" ] []
             , div [ class "line" ] []
             , div [ class "line" ] []
             ]
         ]
+
+
+noPostsToShow : Html msg
+noPostsToShow =
+    div [ class "no-posts-to-show" ] [ p [] [ text "No posts have been added yet" ] ]
+
+
+renderPostsData : RemoteData (List PostDetails) Http.Error -> Html msg -> Html msg
+renderPostsData postsData noPosts =
+    case postsData of
+        Loading ->
+            div [ class "post-list" ] <|
+                List.repeat 8 postsLoadingAnimation
+
+        RequestDone result ->
+            case result of
+                Ok posts ->
+                    if List.length posts > 0 then
+                        div [ class "post-list" ] <|
+                            renderPosts posts
+
+                    else
+                        noPosts
+
+                Err error ->
+                    renderHttpError error
 
 
 renderPosts : List PostDetails -> List (Html msg)
@@ -159,7 +173,7 @@ renderPosts posts =
                     [ img [ src post.thumbnail, class "thumbnail" ] []
                     , div [ class "date" ] [ text post.date ]
                     , h1 [ class "title" ] [ text post.title ]
-                    , div [ class "synopsis" ] [ text post.synopsis ]
+                    , div [ class "summary" ] [ text post.summary ]
                     ]
                 ]
                 :: renderPosts others
