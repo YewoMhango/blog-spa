@@ -1,6 +1,8 @@
 elm-spa build
+
 rm -r "../app/static/"
 mkdir "../app/static/"
+
 cp -r ./public/dist/ ../app/static/dist/
 mkdir ../app/static/css/
 cp -r ./public/css/Besley/ ../app/static/css/Besley/
