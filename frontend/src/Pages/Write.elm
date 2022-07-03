@@ -40,7 +40,7 @@ page _ req =
 type alias Model =
     { navbarModel : Navbar.Model
     , title : String
-    , synopsis : String
+    , summary : String
     , userName : String
     , thumbnail : Maybe File
     , thumbnailPreview : String
@@ -120,7 +120,7 @@ update req msg model =
             )
 
         GotSummary summary ->
-            ( { model | synopsis = summary }
+            ( { model | summary = summary }
             , Cmd.none
             )
 
@@ -141,7 +141,7 @@ update req msg model =
                         , body =
                             Http.multipartBody
                                 [ Http.stringPart "title" model.title
-                                , Http.stringPart "synopsis" model.synopsis
+                                , Http.stringPart "summary" model.summary
                                 , Http.stringPart "userName" model.userName
                                 , Http.stringPart "postContent" model.postContent
                                 , Http.filePart "thumbnail" thumbnail
@@ -300,7 +300,7 @@ isPublishable model =
     if
         model.title
             /= ""
-            && model.synopsis
+            && model.summary
             /= ""
             && model.userName
             /= ""
