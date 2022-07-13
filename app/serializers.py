@@ -5,6 +5,7 @@ from rest_framework import serializers
 class BlogSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
     date = serializers.SerializerMethodField()
+    author = serializers.SerializerMethodField()
 
     class Meta:
         model = Blog
@@ -16,6 +17,9 @@ class BlogSerializer(serializers.ModelSerializer):
 
     def get_date(self, obj: Blog):
         return obj.date.strftime("%d %B, %Y")
+
+    def get_author(self, obj: Blog):
+        return obj.author.__str__()
 
 
 class BlogsListSerializer(serializers.ModelSerializer):
