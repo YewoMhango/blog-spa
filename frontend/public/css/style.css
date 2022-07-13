@@ -45,8 +45,34 @@ button {
   cursor: pointer;
 }
 
+button.confirm {
+  display: inline-block;
+  padding: 10px 50px;
+  font-size: 1.1em;
+  border-radius: 5px;
+  background-color: #1266f1;
+  color: white;
+  font-weight: bold;
+  border: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+button.confirm:hover {
+  background-color: #0945a7;
+}
+
+button.confirm:disabled {
+  border: 1px solid rgb(205, 205, 205);
+  background-color: rgb(245, 245, 245);
+  color: rgb(180, 180, 180);
+  cursor: not-allowed;
+}
+
 a {
-  color: rgb(95, 95, 95);
+  color: rgb(110, 110, 110);
   text-decoration: none;
 }
 
@@ -93,7 +119,7 @@ a:hover {
 .loading-animation .line {
   background-color: #d0d0d0;
   background: linear-gradient(to right, #d0d0d0 0%, #e0e0e0 20%, #d0d0d0 40%);
-  background-size: 1500px 1500px;
+  background-size: 1000px 500px;
   animation: 1.6s gradient-shimmer infinite linear;
 }
 
@@ -104,6 +130,95 @@ a:hover {
 .loading-animation .image,
 .loading-animation .line {
   background-color: #eee;
+}
+
+/* Rotating Loading Animation ================= */
+.loading-spinner {
+  display: inline-block;
+  animation: rotating 0.8s linear infinite;
+  border: 2px solid rgba(180, 180, 180, 0.3);
+  border-top-color: rgb(180, 180, 180);
+  border-right-color: rgb(180, 180, 180);
+}
+
+.loading-spinner.small {
+  width: 20px;
+  height: 20px;
+  border-radius: 20px;
+}
+
+.loading-spinner.large {
+  width: 60px;
+  height: 60px;
+  border-radius: 60px;
+  border-width: 4px;
+}
+
+@keyframes rotating {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(90deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  75% {
+    transform: rotate(270deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+button .loading-spinner {
+  margin: 0 10px;
+}
+
+/* Tick Animation ================================= */
+.tick-animation-container {
+  margin: 0 10px;
+}
+.tick-animation-container > div {
+  transform: rotate(-45deg);
+  width: 16px;
+  height: 10px;
+  position: relative;
+}
+.tick-animation-container > div div {
+  position: absolute;
+  background-color: grey;
+}
+.tick-animation-container > div div:nth-child(1) {
+  width: 4px;
+  height: 10px;
+  animation: vertical-line 0.7s cubic-bezier(0.55, 0.06, 0.68, 0.19);
+}
+.tick-animation-container > div div:nth-child(2) {
+  top: 6px;
+  left: 3px;
+  height: 4px;
+  width: 16px;
+  animation: horizontal-line 0.7s cubic-bezier(0.55, 0.06, 0.68, 0.19);
+}
+@keyframes vertical-line {
+  0% {
+    height: 0;
+  }
+  50% {
+    height: 10px;
+  }
+}
+@keyframes horizontal-line {
+  0% {
+    width: 0;
+  }
+  50% {
+    width: 0;
+  }
+  100% {
+    width: 16px;
+  }
 }
 
 /* Navbar ========================================= */
@@ -202,6 +317,7 @@ nav.navbar .nav-right .nav-links li a {
   padding: 15px;
   color: inherit;
   text-decoration: none;
+  font-weight: 500;
 }
 @media screen and (max-width: 800px) {
   nav.navbar .nav-right .nav-links {
@@ -654,6 +770,7 @@ nav.navbar button.search-button > div:nth-child(2) {
 .about-page {
   min-height: calc(100vh - 50px);
   padding: 50px;
+  text-align: center;
 }
 .about-page .container {
   margin: auto;
@@ -797,23 +914,82 @@ nav.navbar button.search-button > div:nth-child(2) {
   text-align: center;
 }
 .writer-page .container .publish-button-container button {
-  display: inline-block;
-  padding: 10px 50px;
-  font-size: 1.1em;
-  border-radius: 0;
-  border: none;
-  background-color: green;
-  color: white;
-  font-weight: bold;
+  margin: 5px auto;
 }
-.writer-page .container .publish-button-container button:hover {
-  background-color: rgb(0, 94, 0);
+
+/* Login Page ===================================== */
+.login-page,
+.sign-in-page {
+  text-align: center;
+  min-height: calc(100vh - 50px);
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
-.writer-page .container .publish-button-container button:disabled {
-  border: 1px solid rgb(180, 180, 180);
-  background-color: #f0f0f0;
-  color: rgb(180, 180, 180);
-  cursor: not-allowed;
+.login-page .login-form,
+.login-page .sign-in-form,
+.sign-in-page .login-form,
+.sign-in-page .sign-in-form {
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px;
+  background-color: white;
+  width: fit-content;
+}
+@media screen and (max-width: 550px) {
+  .login-page .login-form,
+.login-page .sign-in-form,
+.sign-in-page .login-form,
+.sign-in-page .sign-in-form {
+    min-height: calc(100vh - 50px);
+    justify-content: center;
+    padding: 50px 30px;
+    width: 100%;
+  }
+}
+.login-page .login-form h1,
+.login-page .sign-in-form h1,
+.sign-in-page .login-form h1,
+.sign-in-page .sign-in-form h1 {
+  margin: 0 0 20px 0;
+}
+.login-page .login-form .input-container,
+.login-page .login-form button,
+.login-page .sign-in-form .input-container,
+.login-page .sign-in-form button,
+.sign-in-page .login-form .input-container,
+.sign-in-page .login-form button,
+.sign-in-page .sign-in-form .input-container,
+.sign-in-page .sign-in-form button {
+  font-size: 1.2em;
+}
+.login-page .login-form p,
+.login-page .sign-in-form p,
+.sign-in-page .login-form p,
+.sign-in-page .sign-in-form p {
+  margin: 10px;
+}
+.login-page .login-form input,
+.login-page .sign-in-form input,
+.sign-in-page .login-form input,
+.sign-in-page .sign-in-form input {
+  width: 100%;
+  border-radius: 5px;
+  border: 1px solid rgb(212, 212, 212);
+  padding: 8px 15px;
+  font-size: inherit;
+  margin: 5px;
+}
+.login-page .login-form button,
+.login-page .sign-in-form button,
+.sign-in-page .login-form button,
+.sign-in-page .sign-in-form button {
+  width: 100%;
+  margin: 20px 0 10px 0;
 }
 
 /*# sourceMappingURL=style.css.map */
