@@ -1,7 +1,7 @@
 module Pages.About exposing (Model, Msg, page)
 
 import Gen.Params.About exposing (Params)
-import Html exposing (a, div, h2, p, table, td, text, tr)
+import Html exposing (a, div, h2, p, text)
 import Html.Attributes exposing (class, href)
 import Navbar
 import Page
@@ -74,30 +74,18 @@ viewAbout =
         [ div [ class "container" ]
             [ h2 [] [ text "Made by Yewo Mhango" ]
             , p [] [ text "You can contact or find me using these links:" ]
-            , table []
-                [ tr []
-                    [ td []
-                        [ text "Email: "
-                        ]
-                    , td []
-                        [ a [ href "mailto:mhangoyewoh@gmail.com" ] [ text "mhangoyewoh@gmail.com" ]
-                        ]
+            , div []
+                [ p []
+                    [ text "Email: "
+                    , a [ href "mailto:mhangoyewoh@gmail.com" ] [ text "mhangoyewoh@gmail.com" ]
                     ]
-                , tr []
-                    [ td []
-                        [ text "GitHub: "
-                        ]
-                    , td []
-                        [ a [ href "https://github.com/YewoMhango" ] [ text "@YewoMhango" ]
-                        ]
+                , p []
+                    [ text "GitHub: "
+                    , a [ href "https://github.com/YewoMhango" ] [ text "@YewoMhango" ]
                     ]
-                , tr []
-                    [ td []
-                        [ text "LinkedIn: "
-                        ]
-                    , td []
-                        [ a [ href "https://www.linkedin.com/in/yewo-mhango/" ] [ text "@yewo-mhango" ]
-                        ]
+                , p []
+                    [ text "LinkedIn: "
+                    , a [ href "https://www.linkedin.com/in/yewo-mhango/" ] [ text "@yewo-mhango" ]
                     ]
                 ]
             ]
