@@ -15,7 +15,7 @@ import Page
 import Request
 import Shared exposing (CSRFToken)
 import Task
-import Utils exposing (flipBool, httpErrorAsText)
+import Utils exposing (allNotEmptyStrings, flipBool, httpErrorAsText, smallLoadingSpinner)
 import View exposing (View)
 
 
@@ -41,7 +41,6 @@ type alias Model =
     { navbarModel : Navbar.Model
     , title : String
     , summary : String
-    , userName : String
     , thumbnail : Maybe File
     , thumbnailPreview : String
     , postContent : String
@@ -57,9 +56,18 @@ type PublishStatus
     | GotResponse (Result Http.Error String)
 
 
-init : CSRFToken ->  ( Model, Cmd Msg )
+init : CSRFToken -> ( Model, Cmd Msg )
 init csrfToken =
-    ( Model Navbar.init "" "" "" Nothing "" "" Input Writing csrfToken
+    ( { navbarModel = Navbar.init
+      , title = ""
+      , summary = ""
+      , thumbnail = Nothing
+      , postContent = ""
+      , thumbnailPreview = ""
+      , currentTab = Input
+      , publishStatus = Writing
+      , csrfToken = csrfToken
+      }
     , Cmd.none
     )
 
@@ -72,7 +80,6 @@ type Msg
     = NavbarMsg Navbar.Msg
     | GotTitle String
     | GotSummary String
-    | GotName String
     | GotPostContent String
     | SwitchToInputTab
     | SwitchToPreviewTab
@@ -97,11 +104,6 @@ update req msg model =
 
         GotTitle title ->
             ( { model | title = title }
-            , Cmd.none
-            )
-
-        GotName name ->
-            ( { model | userName = name }
             , Cmd.none
             )
 
@@ -144,7 +146,6 @@ update req msg model =
                                 [ Http.stringPart "csrfmiddlewaretoken" model.csrfToken
                                 , Http.stringPart "title" model.title
                                 , Http.stringPart "summary" model.summary
-                                , Http.stringPart "userName" model.userName
                                 , Http.stringPart "postContent" model.postContent
                                 , Http.filePart "thumbnail" thumbnail
                                 ]
@@ -206,10 +207,6 @@ viewWriter model =
                     , td [] [ textarea [ id "summary", onInput GotSummary ] [] ]
                     ]
                 , tr []
-                    [ td [] [ label [ for "name" ] [ text "Your Name:" ] ]
-                    , td [] [ input [ id "name", type_ "text", onInput GotName ] [] ]
-                    ]
-                , tr []
                     [ td [] [ label [ for "thumbnail" ] [ text "Thumbnail:" ] ]
                     , td []
                         [ input
@@ -257,22 +254,35 @@ viewWriter model =
                         model.postContent
                     ]
                 ]
-            , div [class "uploading-errors"] 
-                [ text (
-                    case model.publishStatus of 
-                        GotResponse (Err error) -> httpErrorAsText error
-                        _ -> ""
-                )]
-            , div [ class "publish-button-container" ]
-                [ button [ disabled (isPublishable model |> flipBool), onClick PublishPost ]
-                    [ text <|
-                        case model.publishStatus of
-                            Uploading ->
-                                "Uploading..."
+            , div [ class "uploading-errors" ]
+                [ text
+                    (case model.publishStatus of
+                        GotResponse (Err error) ->
+                            httpErrorAsText error
 
-                            _ ->
-                                "Publish"
+                        _ ->
+                            ""
+                    )
+                ]
+            , div [ class "publish-button-container" ]
+                [ button
+                    [ class "confirm"
+                    , disabled <|
+                        flipBool <|
+                            isPublishable model
+                    , onClick PublishPost
                     ]
+                    (case model.publishStatus of
+                        Uploading ->
+                            [ smallLoadingSpinner True
+                            , text
+                                "Uploading..."
+                            ]
+
+                        _ ->
+                            [ text "Publish"
+                            ]
+                    )
                 ]
             ]
         ]
@@ -306,16 +316,13 @@ viewThumbnailPreview url =
 isPublishable : Model -> Bool
 isPublishable model =
     if
-        model.title
-            /= ""
-            && model.summary
-            /= ""
-            && model.userName
-            /= ""
+        allNotEmptyStrings
+            [ model.title
+            , model.summary
+            , model.postContent
+            ]
             && model.thumbnail
             /= Nothing
-            && model.postContent
-            /= ""
             && model.publishStatus
             /= Uploading
     then
