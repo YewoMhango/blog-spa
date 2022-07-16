@@ -1,11 +1,12 @@
 
 from functools import reduce
 from django.db import IntegrityError
-from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
 from rest_framework import generics
 from django.shortcuts import render
 from django.views.decorators.http import require_POST
 from django.contrib.auth import authenticate, login, logout
+from django.middleware import csrf
 
 from app.serializers import BlogSerializer, BlogsListSerializer
 from app.models import Blog, User
@@ -15,6 +16,10 @@ from app.models import Blog, User
 
 def index(request: HttpRequest, resource: str):
     return render(request, 'index.html')
+
+
+def favicon(request: HttpRequest):
+    return HttpResponseRedirect("/static/favicon.ico")
 
 
 def view_post(request: HttpRequest, post: str):
@@ -67,7 +72,7 @@ def login_view(request: HttpRequest):
         return HttpResponse("Invalid credential", status=400)
 
     login(request, user)
-    return HttpResponse("Successfully logged in")
+    return HttpResponse(csrf.get_token(request))
 
 
 @require_POST
@@ -98,7 +103,7 @@ def logout_view(request: HttpRequest):
     return HttpResponse("Successfully logged out")
 
 
-def who_am_i(request: HttpRequest):
+def user_auth_details(request: HttpRequest):
     return JsonResponse(
         {'authenticated': request.user.is_authenticated,
          'canpost': request.user.is_staff}
@@ -107,8 +112,8 @@ def who_am_i(request: HttpRequest):
 
 @require_POST
 def publish(request: HttpRequest):
-    if not request.user.is_authenticated:
-        return HttpResponse("You need to login", status=401)
+    if not (request.user.is_authenticated and request.user.is_staff):
+        return HttpResponse("You need to be a staff user to publish", status=401)
 
     reqDict = request.POST.dict()
 
