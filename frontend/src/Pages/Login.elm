@@ -218,7 +218,7 @@ loginView model =
                                 [ text "Login" ]
 
                             Ok _ ->
-                                [ tickAnimation "rgb(180, 180, 180)" True, text "Login Successful" ]
+                                [ tickAnimation "white" True, text "Login Successful" ]
                 )
             , p []
                 [ text "Or "

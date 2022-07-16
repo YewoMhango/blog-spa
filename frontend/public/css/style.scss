@@ -74,9 +74,7 @@ button.confirm:hover {
 }
 
 button.confirm:disabled {
-   border: 1px solid rgb(205, 205, 205);
-   background-color: rgb(245, 245, 245);
-   color: rgb(180, 180, 180);
+   background-color: rgb(180, 180, 180);
    cursor: not-allowed;
 }
 

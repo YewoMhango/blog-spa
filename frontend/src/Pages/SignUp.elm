@@ -239,7 +239,7 @@ signInView model =
                                 [ text "Sign Up" ]
 
                             Ok _ ->
-                                [ tickAnimation "rgb(180, 180, 180)" True, text "Sign Up Successful" ]
+                                [ tickAnimation "white" True, text "Sign Up Successful" ]
                 )
             , p []
                 [ text "Or "
