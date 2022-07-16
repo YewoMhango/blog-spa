@@ -1,0 +1,30 @@
+{
+  "name": "blog-spa-frontend",
+  "version": "1.0.0",
+  "description": "> 🌳  built with [elm-spa](https://elm-spa.dev)",
+  "main": "index.js",
+  "scripts": {
+    "start": "elm-spa server",
+    "build": "elm-spa build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YewoMhango/blog-spa.git"
+  },
+  "keywords": [
+    "SPA",
+    "Elm",
+    "elm-spa"
+  ],
+  "author": "Yewo Mhango",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/YewoMhango/blog-spa/issues"
+  },
+  "homepage": "https://github.com/YewoMhango/blog-spa#readme",
+  "dependencies": {
+    "elm": "^0.19.1-5",
+    "elm-spa": "^6.0.4"
+  }
+}
