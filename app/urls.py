@@ -18,13 +18,14 @@ from django.urls import include, path
 from . import views
 
 urlpatterns = [
+    path('favicon.ico', views.favicon, name='favicon'),
     path("api/post/<slug:post>", views.view_post, name='view_post'),
     path('api/publish', views.publish, name='publish'),
     path('api/posts', views.BlogsListView.as_view(), name="posts"),
     path('api/sign-up', views.sign_up, name="sign-up"),
     path('api/login', views.login_view, name="login"),
     path('api/logout', views.logout_view, name="logout"),
-    path('api/whoami', views.who_am_i, name="whoami"),
+    path('api/user-details', views.user_auth_details, name="user-details"),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('', views.index, {'resource': ''}, name='index'),
     path('<path:resource>', views.index, name='index')
