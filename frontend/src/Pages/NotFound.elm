@@ -1,5 +1,6 @@
 module Pages.NotFound exposing (Model, Msg, page)
 
+import Effect exposing (Effect)
 import Gen.Params.NotFound exposing (Params)
 import Html exposing (a, div, h1, h3, main_, p, text)
 import Html.Attributes exposing (class, href)
@@ -11,11 +12,11 @@ import View exposing (View)
 
 
 page : Shared.Model -> Request.With Params -> Page.With Model Msg
-page _ _ =
-    Page.element
+page shared _ =
+    Page.advanced
         { init = init
         , update = update
-        , view = view
+        , view = view shared
         , subscriptions = subscriptions
         }
 
@@ -28,9 +29,9 @@ type alias Model =
     { navbarModel : Navbar.Model }
 
 
-init : ( Model, Cmd Msg )
+init : ( Model, Effect Msg )
 init =
-    ( Model Navbar.init, Cmd.none )
+    ( Model Navbar.init, Effect.none )
 
 
 
@@ -41,11 +42,11 @@ type Msg
     = NavbarMsg Navbar.Msg
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> Model -> ( Model, Effect Msg )
 update msg model =
     case msg of
         NavbarMsg navMsg ->
-            ( { model | navbarModel = Navbar.update model.navbarModel navMsg }, Cmd.none )
+            Navbar.update model navMsg
 
 
 
@@ -61,10 +62,13 @@ subscriptions _ =
 -- VIEW
 
 
-view : Model -> View Msg
-view model =
+view : Shared.Model -> Model -> View Msg
+view shared model =
     { title = "404 - Page not Found"
-    , body = [ Navbar.view model.navbarModel NavbarMsg, view404 ]
+    , body =
+        [ Navbar.view shared model.navbarModel NavbarMsg
+        , view404
+        ]
     }
 
 

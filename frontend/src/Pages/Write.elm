@@ -1,5 +1,6 @@
 module Pages.Write exposing (Model, Msg, page)
 
+import Effect exposing (Effect)
 import File exposing (File)
 import Gen.Params.Write exposing (Params)
 import Gen.Route
@@ -24,13 +25,14 @@ import View exposing (View)
 
 
 page : Shared.Model -> Request.With Params -> Page.With Model Msg
-page sharedModel req =
-    Page.element
-        { view = view
-        , init = init sharedModel.csrfToken
-        , update = update req
-        , subscriptions = subscriptions
-        }
+page shared req =
+    Page.protected.advanced <|
+        \_ ->
+            { view = view shared
+            , init = init shared.csrfToken
+            , update = update req
+            , subscriptions = subscriptions
+            }
 
 
 
@@ -56,7 +58,7 @@ type PublishStatus
     | GotResponse (Result Http.Error String)
 
 
-init : CSRFToken -> ( Model, Cmd Msg )
+init : CSRFToken -> ( Model, Effect Msg )
 init csrfToken =
     ( { navbarModel = Navbar.init
       , title = ""
@@ -68,7 +70,7 @@ init csrfToken =
       , publishStatus = Writing
       , csrfToken = csrfToken
       }
-    , Cmd.none
+    , Effect.none
     )
 
 
@@ -94,82 +96,91 @@ type Tab
     | Preview
 
 
-update : Request.With Params -> Msg -> Model -> ( Model, Cmd Msg )
+update : Request.With Params -> Msg -> Model -> ( Model, Effect Msg )
 update req msg model =
     case msg of
         NavbarMsg innerMsg ->
-            ( { model | navbarModel = Navbar.update model.navbarModel innerMsg }
-            , Cmd.none
-            )
+            Navbar.update model innerMsg
 
         GotTitle title ->
             ( { model | title = title }
-            , Cmd.none
+            , Effect.none
             )
 
         GotPostContent content ->
             ( { model | postContent = content }
-            , Cmd.none
+            , Effect.none
             )
 
         SwitchToInputTab ->
             ( { model | currentTab = Input }
-            , Cmd.none
+            , Effect.none
             )
 
         SwitchToPreviewTab ->
             ( { model | currentTab = Preview }
-            , Cmd.none
+            , Effect.none
             )
 
         GotSummary summary ->
             ( { model | summary = summary }
-            , Cmd.none
+            , Effect.none
             )
 
         GotThumbnailFile file _ ->
             ( { model | thumbnail = Just file }
-            , Task.perform GotPreview (File.toUrl file)
+            , Effect.fromCmd <| Task.perform GotPreview (File.toUrl file)
             )
 
         GotPreview preview ->
-            ( { model | thumbnailPreview = preview }, Cmd.none )
+            ( { model | thumbnailPreview = preview }, Effect.none )
 
         PublishPost ->
             case model.thumbnail of
                 Just thumbnail ->
                     ( { model | publishStatus = Uploading }
-                    , Http.post
-                        { url = "/api/publish"
-                        , body =
-                            Http.multipartBody
-                                [ Http.stringPart "csrfmiddlewaretoken" model.csrfToken
-                                , Http.stringPart "title" model.title
-                                , Http.stringPart "summary" model.summary
-                                , Http.stringPart "postContent" model.postContent
-                                , Http.filePart "thumbnail" thumbnail
-                                ]
-                        , expect = Http.expectString Uploaded
-                        }
+                    , Effect.fromCmd <|
+                        Http.post
+                            { url = "/api/publish"
+                            , body =
+                                Http.multipartBody
+                                    [ Http.stringPart "csrfmiddlewaretoken" model.csrfToken
+                                    , Http.stringPart "title" model.title
+                                    , Http.stringPart "summary" model.summary
+                                    , Http.stringPart "postContent" model.postContent
+                                    , Http.filePart "thumbnail" thumbnail
+                                    ]
+                            , expect = Http.expectString Uploaded
+                            }
                     )
 
                 Nothing ->
-                    ( model, Cmd.none )
+                    ( model, Effect.none )
 
         Uploaded result ->
             ( { model | publishStatus = GotResponse result }
             , case result of
                 Ok postUrlSlug ->
-                    Request.pushRoute (Gen.Route.Post__Title_ { title = postUrlSlug }) req
+                    Effect.fromCmd <|
+                        Request.pushRoute
+                            (Gen.Route.Post__Title_
+                                { title = postUrlSlug
+                                }
+                            )
+                            req
 
                 Err _ ->
-                    Cmd.none
+                    Effect.none
             )
 
 
 fileDecoder : Json.Decode.Decoder Msg
 fileDecoder =
-    Json.Decode.at [ "target", "files" ] (Json.Decode.oneOrMore GotThumbnailFile File.decoder)
+    Json.Decode.at [ "target", "files" ]
+        (Json.Decode.oneOrMore
+            GotThumbnailFile
+            File.decoder
+        )
 
 
 
@@ -185,10 +196,13 @@ subscriptions _ =
 -- VIEW
 
 
-view : Model -> View Msg
-view model =
+view : Shared.Model -> Model -> View Msg
+view shared model =
     { title = "Write a New Blog Post"
-    , body = [ Navbar.view model.navbarModel NavbarMsg, viewWriter model ]
+    , body =
+        [ Navbar.view shared model.navbarModel NavbarMsg
+        , viewWriter model
+        ]
     }
 
 

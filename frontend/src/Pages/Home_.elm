@@ -1,5 +1,6 @@
 module Pages.Home_ exposing (Model, Msg, PostDetails, page, postsLoadingAnimation, renderPosts, renderPostsData)
 
+import Effect exposing (Effect)
 import Html exposing (Html, a, div, h1, img, main_, p, text)
 import Html.Attributes exposing (class, href, src)
 import Http
@@ -18,9 +19,9 @@ import View exposing (View)
 
 
 page : Shared.Model -> Request -> Page.With Model Msg
-page _ _ =
-    Page.element
-        { view = view
+page shared _ =
+    Page.advanced
+        { view = view shared
         , init = init
         , update = update
         , subscriptions = subscriptions
@@ -46,10 +47,10 @@ type alias PostDetails =
     }
 
 
-init : ( Model, Cmd Msg )
+init : ( Model, Effect Msg )
 init =
     ( Model Loading Navbar.init
-    , getPosts
+    , Effect.fromCmd getPosts
     )
 
 
@@ -62,16 +63,16 @@ type Msg
     | NavbarMsg Navbar.Msg
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> Model -> ( Model, Effect Msg )
 update msg model =
-    ( case msg of
+    case msg of
         GotPosts result ->
-            { model | posts = RequestDone result }
+            ( { model | posts = RequestDone result }
+            , Effect.none
+            )
 
         NavbarMsg innerMsg ->
-            { model | navbarModel = Navbar.update model.navbarModel innerMsg }
-    , Cmd.none
-    )
+            Navbar.update model innerMsg
 
 
 getPosts : Cmd Msg
@@ -107,11 +108,14 @@ subscriptions _ =
 -- VIEW
 
 
-view : Model -> View Msg
-view model =
+view : Shared.Model -> Model -> View Msg
+view shared model =
     { title = "Homepage"
     , body =
-        [ Navbar.view model.navbarModel NavbarMsg
+        [ Navbar.view
+            shared
+            model.navbarModel
+            NavbarMsg
         , viewPosts model.posts
         ]
     }

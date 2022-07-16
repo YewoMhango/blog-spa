@@ -1,7 +1,7 @@
 module Utils exposing (..)
 
 import Html exposing (Html, div, text)
-import Html.Attributes exposing (class, hidden, style)
+import Html.Attributes exposing (class, style)
 import Http exposing (Error(..))
 
 

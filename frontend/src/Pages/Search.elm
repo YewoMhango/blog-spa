@@ -1,6 +1,7 @@
 module Pages.Search exposing (Model, Msg, page)
 
 import Dict
+import Effect exposing (Effect)
 import Html exposing (Html, div, h2, main_, p, text)
 import Html.Attributes exposing (class)
 import Http
@@ -19,9 +20,9 @@ import View exposing (View)
 
 
 page : Shared.Model -> Request -> Page.With Model Msg
-page _ req =
-    Page.element
-        { view = view
+page shared req =
+    Page.advanced
+        { view = view shared
         , init = init req
         , update = update
         , subscriptions = subscriptions
@@ -46,7 +47,7 @@ type alias QueryParams =
     }
 
 
-init : Request -> ( Model, Cmd Msg )
+init : Request -> ( Model, Effect Msg )
 init req =
     let
         params =
@@ -55,10 +56,12 @@ init req =
     ( Model Loading Navbar.init params req
     , case params.searchTerm of
         Just _ ->
-            getPosts <| Maybe.withDefault "" req.url.query
+            Effect.fromCmd <|
+                getPosts <|
+                    Maybe.withDefault "" req.url.query
 
         Nothing ->
-            Cmd.none
+            Effect.none
     )
 
 
@@ -112,16 +115,16 @@ type Msg
     | NavbarMsg Navbar.Msg
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> Model -> ( Model, Effect Msg )
 update msg model =
-    ( case msg of
+    case msg of
         GotPosts result ->
-            { model | posts = RequestDone result }
+            ( { model | posts = RequestDone result }
+            , Effect.none
+            )
 
         NavbarMsg innerMsg ->
-            { model | navbarModel = Navbar.update model.navbarModel innerMsg }
-    , Cmd.none
-    )
+            Navbar.update model innerMsg
 
 
 
@@ -137,8 +140,8 @@ subscriptions _ =
 -- VIEW
 
 
-view : Model -> View Msg
-view model =
+view : Shared.Model -> Model -> View Msg
+view shared model =
     { title =
         case model.query.searchTerm of
             Just s ->
@@ -147,7 +150,10 @@ view model =
             Nothing ->
                 "Search Page"
     , body =
-        [ Navbar.view model.navbarModel NavbarMsg
+        [ Navbar.view
+            shared
+            model.navbarModel
+            NavbarMsg
         , viewPosts model
         ]
     }

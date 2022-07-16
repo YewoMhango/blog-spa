@@ -1,5 +1,6 @@
 module Pages.Post.Title_ exposing (Model, Msg, page)
 
+import Effect exposing (Effect)
 import Gen.Params.Post.Title_ exposing (Params)
 import Html exposing (Html, div, h1, header, main_, p, text)
 import Html.Attributes exposing (class)
@@ -19,9 +20,9 @@ import View exposing (View)
 
 
 page : Shared.Model -> Request.With Params -> Page.With Model Msg
-page _ req =
-    Page.element
-        { view = view
+page shared req =
+    Page.advanced
+        { view = view shared
         , init = init req
         , update = update
         , subscriptions = subscriptions
@@ -55,10 +56,10 @@ type alias Post =
     }
 
 
-init : Request.With Params -> ( Model, Cmd Msg )
+init : Request.With Params -> ( Model, Effect Msg )
 init req =
     ( Model Loading req.params.title Navbar.init
-    , getPost req.params.title
+    , Effect.fromCmd <| getPost req.params.title
     )
 
 
@@ -71,16 +72,16 @@ type Msg
     | NavbarMsg Navbar.Msg
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> Model -> ( Model, Effect Msg )
 update msg model =
-    ( case msg of
+    case msg of
         GotPosts result ->
-            { model | post = RequestDone result }
+            ( { model | post = RequestDone result }
+            , Effect.none
+            )
 
         NavbarMsg innerMsg ->
-            { model | navbarModel = Navbar.update model.navbarModel innerMsg }
-    , Cmd.none
-    )
+            Navbar.update model innerMsg
 
 
 getPost : String -> Cmd Msg
@@ -116,10 +117,16 @@ subscriptions _ =
 -- VIEW
 
 
-view : Model -> View Msg
-view model =
+view : Shared.Model -> Model -> View Msg
+view shared model =
     { title = viewTitle model
-    , body = [ Navbar.view model.navbarModel NavbarMsg, viewPost model.post ]
+    , body =
+        [ Navbar.view
+            shared
+            model.navbarModel
+            NavbarMsg
+        , viewPost model.post
+        ]
     }
 
 
