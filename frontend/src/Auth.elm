@@ -26,7 +26,7 @@ Here, you can provide logic on where to redirect if a user is not signed in.
 
 -}
 beforeProtectedInit : Shared.Model -> Request -> ElmSpa.Protected User Route
-beforeProtectedInit shared req =
+beforeProtectedInit shared _ =
     if shared.user.canPost then
         ElmSpa.Provide shared.user
 
