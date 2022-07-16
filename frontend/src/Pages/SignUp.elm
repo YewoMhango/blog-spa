@@ -1,24 +1,26 @@
 module Pages.SignUp exposing (Model, Msg, page)
 
 import Effect exposing (Effect)
-import Gen.Params.Login exposing (Params)
+import Gen.Params.SignUp exposing (Params)
 import Html exposing (a, button, div, h1, input, main_, p, text)
-import Html.Attributes exposing (class, disabled, href, id, name, placeholder, type_, value)
-import Html.Events exposing (onInput)
+import Html.Attributes exposing (class, disabled, href, id, name, placeholder, style, type_, value)
+import Html.Events exposing (onClick, onInput)
+import Http exposing (Error(..))
 import Navbar
 import Page
+import Pages.Login exposing (handleLoginApiResultCsrf)
 import Request
-import Shared
-import Utils exposing (allNotEmptyStrings, flipBool)
+import Shared exposing (CSRFToken)
+import Utils exposing (allNotEmptyStrings, flipBool, smallLoadingSpinner, tickAnimation)
 import View exposing (View)
 
 
 page : Shared.Model -> Request.With Params -> Page.With Model Msg
-page _ _ =
+page shared _ =
     Page.advanced
-        { init = init
+        { init = init shared
         , update = update
-        , view = view
+        , view = view shared
         , subscriptions = subscriptions
         }
 
@@ -33,16 +35,26 @@ type alias Model =
     , firstName : String
     , lastName : String
     , password : String
+    , signupStatus : SignupStatus
+    , csrfToken : CSRFToken
     }
 
 
-init : ( Model, Effect Msg )
-init =
+type SignupStatus
+    = SigningUp
+    | EnteringData
+    | ResponseReturned (Result Http.Error String)
+
+
+init : Shared.Model -> ( Model, Effect Msg )
+init shared =
     ( { navbarModel = Navbar.init
       , email = ""
       , firstName = ""
       , lastName = ""
       , password = ""
+      , signupStatus = EnteringData
+      , csrfToken = shared.csrfToken
       }
     , Effect.none
     )
@@ -58,18 +70,15 @@ type Msg
     | PasswordChanged String
     | FirstNameChanged String
     | LastNameChanged String
+    | SignupButtonPressed
+    | Uploaded (Result Http.Error String)
 
 
 update : Msg -> Model -> ( Model, Effect Msg )
 update msg model =
     case msg of
         NavbarMsg navMsg ->
-            ( { model
-                | navbarModel =
-                    Navbar.update model.navbarModel navMsg
-              }
-            , Effect.none
-            )
+            Navbar.update model navMsg
 
         EmailChanged email ->
             ( { model | email = email }, Effect.none )
@@ -82,6 +91,28 @@ update msg model =
 
         LastNameChanged lastName ->
             ( { model | lastName = lastName }, Effect.none )
+
+        SignupButtonPressed ->
+            ( { model | signupStatus = SigningUp }
+            , Effect.fromCmd <|
+                Http.post
+                    { url = "/api/sign-up"
+                    , body =
+                        Http.multipartBody
+                            [ Http.stringPart "csrfmiddlewaretoken" model.csrfToken
+                            , Http.stringPart "email" model.email
+                            , Http.stringPart "password" model.password
+                            , Http.stringPart "firstname" model.firstName
+                            , Http.stringPart "lastname" model.lastName
+                            ]
+                    , expect = Http.expectString Uploaded
+                    }
+            )
+
+        Uploaded result ->
+            ( { model | signupStatus = ResponseReturned result }
+            , handleLoginApiResultCsrf result
+            )
 
 
 
@@ -97,11 +128,11 @@ subscriptions _ =
 -- VIEW
 
 
-view : Model -> View Msg
-view model =
+view : Shared.Model -> Model -> View Msg
+view shared model =
     { title = "Sign Up"
     , body =
-        [ Navbar.view model.navbarModel NavbarMsg
+        [ Navbar.view shared model.navbarModel NavbarMsg
         , signInView model
         ]
     }
@@ -148,6 +179,31 @@ signInView model =
                 , onInput PasswordChanged
                 ]
                 []
+            , div [ style "color" "red" ]
+                [ text <|
+                    case model.signupStatus of
+                        ResponseReturned result ->
+                            case result of
+                                Err error ->
+                                    case error of
+                                        Http.Timeout ->
+                                            "The request timed-out"
+
+                                        Http.NetworkError ->
+                                            "A network error occured while trying to sign up"
+
+                                        Http.BadStatus 400 ->
+                                            "Incorrect details provided"
+
+                                        _ ->
+                                            "Signing up failed"
+
+                                Ok _ ->
+                                    ""
+
+                        _ ->
+                            ""
+                ]
             , button
                 [ class "confirm"
                 , disabled <|
@@ -161,8 +217,30 @@ signInView model =
                             && String.length model.password
                             > 5
                             && String.contains "@" model.email
+                            && (case model.signupStatus of
+                                    ResponseReturned (Ok _) ->
+                                        False
+
+                                    _ ->
+                                        True
+                               )
+                , onClick SignupButtonPressed
                 ]
-                [ text "Sign Up" ]
+                (case model.signupStatus of
+                    SigningUp ->
+                        [ smallLoadingSpinner True, text "Signing Up" ]
+
+                    EnteringData ->
+                        [ text "Sign Up" ]
+
+                    ResponseReturned result ->
+                        case result of
+                            Err _ ->
+                                [ text "Sign Up" ]
+
+                            Ok _ ->
+                                [ tickAnimation "rgb(180, 180, 180)" True, text "Sign Up Successful" ]
+                )
             , p []
                 [ text "Or "
                 , a

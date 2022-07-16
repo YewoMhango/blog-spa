@@ -1,10 +1,10 @@
-module Pages.Login exposing (Model, Msg, page)
+module Pages.Login exposing (Model, Msg, handleLoginApiResultCsrf, page)
 
 import Effect exposing (Effect)
 import Gen.Params.Login exposing (Params)
 import Html exposing (a, button, div, h1, input, main_, p, text)
-import Html.Attributes exposing (class, disabled, href, id, name, placeholder, type_)
-import Html.Events exposing (onInput)
+import Html.Attributes exposing (class, disabled, href, id, name, placeholder, style, type_)
+import Html.Events exposing (onClick, onInput)
 import Http
 import Navbar
 import Page
@@ -15,11 +15,11 @@ import View exposing (View)
 
 
 page : Shared.Model -> Request.With Params -> Page.With Model Msg
-page sharedModel _ =
+page shared _ =
     Page.advanced
-        { init = init sharedModel.csrfToken
+        { init = init shared.csrfToken
         , update = update
-        , view = view
+        , view = view shared
         , subscriptions = subscriptions
         }
 
@@ -71,12 +71,7 @@ update : Msg -> Model -> ( Model, Effect Msg )
 update msg model =
     case msg of
         NavbarMsg navMsg ->
-            ( { model
-                | navbarModel =
-                    Navbar.update model.navbarModel navMsg
-              }
-            , Effect.none
-            )
+            Navbar.update model navMsg
 
         EmailChanged email ->
             ( { model | email = email }, Effect.none )
@@ -100,7 +95,25 @@ update msg model =
             )
 
         Uploaded result ->
-            ( { model | loginStatus = ResponseReturned result }, Effect.none )
+            ( { model
+                | loginStatus =
+                    ResponseReturned result
+              }
+            , handleLoginApiResultCsrf result
+            )
+
+
+handleLoginApiResultCsrf : Result error String -> Effect msg
+handleLoginApiResultCsrf result =
+    case result of
+        Ok token ->
+            Effect.batch
+                [ Effect.fromShared <| Shared.SetCsrfToken token
+                , Effect.fromShared Shared.GetAuthDetails
+                ]
+
+        Err _ ->
+            Effect.fromShared Shared.GetAuthDetails
 
 
 
@@ -116,11 +129,11 @@ subscriptions _ =
 -- VIEW
 
 
-view : Model -> View Msg
-view model =
+view : Shared.Model -> Model -> View Msg
+view shared model =
     { title = "Login"
     , body =
-        [ Navbar.view model.navbarModel NavbarMsg
+        [ Navbar.view shared model.navbarModel NavbarMsg
         , loginView model
         ]
     }
@@ -130,7 +143,7 @@ loginView : Model -> Html.Html Msg
 loginView model =
     main_ [ class "login-page" ]
         [ div [ class "login-form" ]
-            [ h1 [] [ tickAnimation "" True, text "Login" ]
+            [ h1 [] [ text "Login" ]
             , input
                 [ id "email"
                 , name "email"
@@ -147,6 +160,31 @@ loginView model =
                 , onInput PasswordChanged
                 ]
                 []
+            , div [ style "color" "red" ]
+                [ text <|
+                    case model.loginStatus of
+                        ResponseReturned result ->
+                            case result of
+                                Err error ->
+                                    case error of
+                                        Http.Timeout ->
+                                            "The request timed-out"
+
+                                        Http.NetworkError ->
+                                            "A network error occured while trying to authenticate"
+
+                                        Http.BadStatus 400 ->
+                                            "Incorrect email or password"
+
+                                        _ ->
+                                            "Authentication failed"
+
+                                Ok _ ->
+                                    ""
+
+                        _ ->
+                            ""
+                ]
             , button
                 [ class "confirm"
                 , disabled <|
@@ -158,23 +196,30 @@ loginView model =
                             && String.length model.password
                             > 5
                             && String.contains "@" model.email
+                            && (case model.loginStatus of
+                                    ResponseReturned (Ok _) ->
+                                        False
+
+                                    _ ->
+                                        True
+                               )
+                , onClick LoginButtonPressed
                 ]
-                [ smallLoadingSpinner <| model.loginStatus == LoggingIn
-                , case model.loginStatus of
+                (case model.loginStatus of
                     LoggingIn ->
-                        text "Logging In"
+                        [ smallLoadingSpinner True, text "Logging In" ]
 
                     EnteringData ->
-                        text "Login"
+                        [ text "Login" ]
 
                     ResponseReturned result ->
                         case result of
                             Err _ ->
-                                text "Login"
+                                [ text "Login" ]
 
                             Ok _ ->
-                                text "Login Successful"
-                ]
+                                [ tickAnimation "rgb(180, 180, 180)" True, text "Login Successful" ]
+                )
             , p []
                 [ text "Or "
                 , a [ href "/sign-up" ] [ text "sign-up" ]

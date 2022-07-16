@@ -1,9 +1,11 @@
 module Navbar exposing (Model, Msg, init, update, view)
 
+import Effect exposing (Effect)
 import Html exposing (a, aside, button, div, form, img, input, li, nav, ol, text)
 import Html.Attributes exposing (action, class, href, name, placeholder, src, type_)
 import Html.Events exposing (onClick)
-import Utils exposing (flipBool)
+import Shared
+import Utils exposing (flipBool, smallLoadingSpinner)
 
 
 type alias Model =
@@ -20,20 +22,44 @@ init =
 type Msg
     = ToggleMenu
     | SearchInputOpened
+    | Logout
 
 
-update : Model -> Msg -> Model
-update model msg =
+update : { m | navbarModel : Model } -> Msg -> ( { m | navbarModel : Model }, Effect msg )
+update mainModel msg =
+    let
+        navbarModel =
+            mainModel.navbarModel
+    in
     case msg of
         ToggleMenu ->
-            { model | menuOpen = flipBool model.menuOpen }
+            ( { mainModel
+                | navbarModel =
+                    { navbarModel
+                        | menuOpen =
+                            flipBool mainModel.navbarModel.menuOpen
+                    }
+              }
+            , Effect.none
+            )
 
         SearchInputOpened ->
-            { model | searchFieldShown = flipBool model.searchFieldShown }
+            ( { mainModel
+                | navbarModel =
+                    { navbarModel
+                        | searchFieldShown =
+                            flipBool mainModel.navbarModel.searchFieldShown
+                    }
+              }
+            , Effect.none
+            )
+
+        Logout ->
+            ( mainModel, Effect.fromShared Shared.SignOut )
 
 
-view : Model -> (Msg -> msg) -> Html.Html msg
-view model toMsg =
+view : Shared.Model -> Model -> (Msg -> msg) -> Html.Html msg
+view shared model toMsg =
     let
         className =
             "navbar"
@@ -53,15 +79,43 @@ view model toMsg =
     nav
         [ class className
         ]
-        [ aside [ class "shader", onClick (toMsg ToggleMenu) ] []
+        [ aside [ class "overlay", onClick (toMsg ToggleMenu) ] []
         , button [ class "menu-button", onClick (toMsg ToggleMenu) ] [ div [] [], div [] [] ]
         , a [ class "logo", href "/" ] [ img [ src "/static/logo.svg" ] [] ]
         , div [ class "nav-right" ]
             [ ol [ class "nav-links", type_ "none" ]
-                [ li [] [ a [ href "/" ] [ text "Home" ] ]
-                , li [] [ a [ href "/write" ] [ text "Write" ] ]
-                , li [] [ a [ href "/about" ] [ text "About" ] ]
-                ]
+                (List.concat
+                    [ [ li [] [ a [ href "/" ] [ text "Home" ] ]
+                      , li [] [ a [ href "/about" ] [ text "About" ] ]
+                      ]
+                    , if shared.user.isAuthenticated then
+                        List.append
+                            (if shared.user.canPost then
+                                [ li []
+                                    [ a [ href "/write" ]
+                                        [ text "Write" ]
+                                    ]
+                                ]
+
+                             else
+                                []
+                            )
+                            [ li [] [ a [ onClick <| toMsg Logout ] [ text "Logout" ] ]
+                            ]
+
+                      else
+                        [ li [] [ a [ href "/login" ] [ text "Login" ] ]
+                        , li [] [ a [ href "/sign-up" ] [ text "Sign-Up" ] ]
+                        ]
+                    , [ li
+                            [ class "loading-spinner-container"
+                            ]
+                            [ smallLoadingSpinner
+                                shared.syncingAuthentication
+                            ]
+                      ]
+                    ]
+                )
             , form [ action "/search" ]
                 [ input
                     [ type_ "search"
