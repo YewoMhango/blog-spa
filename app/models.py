@@ -69,7 +69,7 @@ class Blog(models.Model):
                                processors=[ResizeToFill(480, 270)],
                                format='JPEG',
                                options={'quality': 60})
-    date = models.DateTimeField(auto_now=True)
+    date = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField(blank=True, default="")
     author = models.ForeignKey(User, models.CASCADE)
     views = models.PositiveIntegerField(default=0)
