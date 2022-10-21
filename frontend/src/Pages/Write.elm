@@ -272,7 +272,14 @@ viewWriter model =
                 [ text
                     (case model.publishStatus of
                         GotResponse (Err error) ->
-                            httpErrorAsText error
+                            let
+                                errorText =
+                                    httpErrorAsText error
+                            in
+                            Tuple.first errorText
+                                ++ (Maybe.withDefault "" <|
+                                        Tuple.second errorText
+                                   )
 
                         _ ->
                             ""
@@ -317,7 +324,7 @@ viewThumbnailPreview url =
         [ class "thumbnail-preview"
         , style "height"
             (if url /= "" then
-                "90px"
+                "135px"
 
              else
                 ""

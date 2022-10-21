@@ -85,9 +85,52 @@ a:hover {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: 26px;
-  color: rgb(50, 50, 50);
+  font-family: "Courier New", Courier, monospace;
+  font-size: 24px;
+  color: #f55;
   padding: 50px;
+  text-align: center;
+}
+.loading-error > * {
+  max-width: 600px;
+}
+.loading-error h3 {
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 28px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  margin-bottom: 10px;
+  text-align: left;
+}
+.loading-error h3 .close-icon {
+  margin-right: 20px;
+}
+
+.close-icon {
+  width: 57px;
+  height: 57px;
+  border: 4px solid #f55;
+  display: inline-flex;
+  flex-shrink: 0;
+  border-radius: 30px;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.close-icon div {
+  height: 35px;
+  width: 4px;
+  background-color: #f55;
+  position: absolute;
+}
+.close-icon div:first-child {
+  rotate: 45deg;
+}
+.close-icon div:nth-child(2) {
+  rotate: -45deg;
 }
 
 /* Loading Animation ================================ */
@@ -847,7 +890,7 @@ nav.navbar button.search-button > div:nth-child(2) {
   padding: 5px;
 }
 .writer-page .container > table tr td .thumbnail-preview {
-  width: 160px;
+  width: 240px;
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;

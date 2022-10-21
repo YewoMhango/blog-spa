@@ -1,6 +1,6 @@
 module Utils exposing (..)
 
-import Html exposing (Html, div, text)
+import Html exposing (Html, div, h3, p, span, text)
 import Html.Attributes exposing (class, style)
 import Http exposing (Error(..))
 
@@ -40,32 +40,66 @@ type RemoteData data error
 
 renderHttpError : Http.Error -> Html msg
 renderHttpError error =
+    let
+        errorText =
+            httpErrorAsText error
+    in
     div [ class "loading-error" ]
-        [ text <| httpErrorAsText error ]
+        [ h3 []
+            [ closeIcon
+            , span [] [ text <| Tuple.first errorText ]
+            ]
+        , p []
+            [ text <|
+                Maybe.withDefault "" <|
+                    Tuple.second errorText
+            ]
+        ]
 
 
-httpErrorAsText : Http.Error -> String
+closeIcon : Html msg
+closeIcon =
+    div [ class "close-icon" ]
+        [ div [] []
+        , div [] []
+        ]
+
+
+httpErrorAsText : Http.Error -> ( String, Maybe String )
 httpErrorAsText error =
     case error of
         Http.Timeout ->
-            "The request timed-out"
+            ( "The request timed-out", Nothing )
 
         Http.BadUrl details ->
-            "Bad URL used: " ++ details
+            ( "Bad URL used: ", Just details )
 
         Http.NetworkError ->
-            "A network error occured"
+            ( "A network error occured", Nothing )
 
         Http.BadStatus statusCode ->
             case statusCode of
                 404 ->
-                    "404 error: The resouce was not found"
+                    ( "404 - The resouce was not found", Nothing )
 
                 _ ->
-                    "Bad status code returned when fetching data: " ++ String.fromInt statusCode
+                    ( "Bad status code returned when fetching data: "
+                    , Just <| String.fromInt statusCode
+                    )
 
         Http.BadBody details ->
-            "Error - Bad response body returned: " ++ details
+            ( "Bad response body returned: "
+            , Just <| truncateStringIfTooLong 100 details
+            )
+
+
+truncateStringIfTooLong : Int -> String -> String
+truncateStringIfTooLong length string =
+    if String.length string > length then
+        String.slice 0 length string ++ "..."
+
+    else
+        string
 
 
 smallLoadingSpinner : Bool -> Html.Html msg
