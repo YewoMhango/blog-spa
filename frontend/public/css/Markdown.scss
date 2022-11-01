@@ -1,0 +1,75 @@
+/* Rendered Markdown ============================== */
+
+.post-page .content .container,
+.writer-page .container .input-and-preview .preview {
+
+   h1,
+   h2,
+   h3,
+   h4,
+   h5,
+   h6 {
+      color: rgb(14, 14, 14);
+      font-weight: 500;
+   }
+
+   h1 {
+      font-size: 28px;
+   }
+
+   h2 {
+      font-size: 24px;
+   }
+
+   h3 {
+      font-size: 20px;
+   }
+
+   h4 {
+      font-size: 18px;
+   }
+
+   h5 {
+      font-size: 16px;
+   }
+
+   h6 {
+      font-size: 14px;
+   }
+
+   blockquote {
+      color: rgb(14, 14, 14);
+      border-left: 3px solid rgb(18, 18, 18);
+      margin-left: 0;
+      margin-right: 0;
+      padding-left: 30px;
+
+      p:before {
+         content: "“ ";
+      }
+
+      p:after {
+         content: " ”";
+      }
+
+      p:after,
+      p:before {
+         font-weight: 600;
+      }
+   }
+
+   code {
+      background-color: #e0e0e0;
+   }
+
+   pre {
+      padding: 20px;
+      background-color: #e0e0e0;
+      overflow-x: scroll;
+      font-size: 0.9em;
+   }
+
+   img {
+      max-width: 80%;
+   }
+}

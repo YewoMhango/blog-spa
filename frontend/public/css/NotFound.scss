@@ -1,0 +1,34 @@
+/* 404 Page ======================================== */
+
+@use "./variables";
+
+.not-found-page {
+   min-height: variables.$full-height;
+   padding: 50px;
+   color: rgb(50, 50, 50);
+   text-align: center;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+
+   .container {
+      max-width: 500px;
+
+      h1,
+      h3 {
+         margin: 0;
+      }
+
+      h1 {
+         font-size: 60px;
+      }
+
+      p {
+         a {
+            color: grey;
+            font-weight: 600;
+         }
+      }
+   }
+}

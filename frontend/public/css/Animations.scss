@@ -1,0 +1,164 @@
+/* Loading Animation ================================ */
+
+@keyframes shimmer {
+   0% {
+      background-color: #d8d8d8;
+   }
+
+   50% {
+      background-color: #f0f0f0;
+   }
+
+   100% {
+      background-color: #d8d8d8;
+   }
+}
+
+@keyframes gradient-shimmer {
+   0% {
+      background-position: -500px;
+   }
+
+   50% {
+      background-position-x: 500px;
+   }
+
+   100% {
+      background-position-x: 1500px;
+   }
+}
+
+@mixin gradient-animation {
+   background-color: #d0d0d0;
+   background: linear-gradient(to right, #d0d0d0 0%, #e0e0e0 20%, #d0d0d0 40%);
+   background-size: 1000px 500px;
+   animation: 1.6s gradient-shimmer infinite linear;
+}
+
+.loading-animation {
+   .image {
+      width: 100%;
+      height: 200px;
+      // border-radius: 3px;
+   }
+
+   .image,
+   .line {
+      background-color: #eee;
+      @include gradient-animation;
+      // animation: shimmer infinite 1.5s ease;
+      // border-radius: 3px;
+   }
+}
+
+/* Rotating Loading Animation ================= */
+
+.loading-spinner {
+   display: inline-block;
+   animation: rotating 0.8s linear infinite;
+   border: 2px solid rgba(180, 180, 180, 0.3);
+   border-top-color: rgb(180, 180, 180);
+   border-right-color: rgb(180, 180, 180);
+}
+
+.loading-spinner.small {
+   width: 20px;
+   height: 20px;
+   border-radius: 20px;
+}
+
+.loading-spinner.large {
+   width: 60px;
+   height: 60px;
+   border-radius: 60px;
+   border-width: 4px;
+}
+
+@keyframes rotating {
+   0% {
+      transform: rotate(0deg);
+   }
+
+   25% {
+      transform: rotate(90deg);
+   }
+
+   50% {
+      transform: rotate(180deg);
+   }
+
+   75% {
+      transform: rotate(270deg);
+   }
+
+   100% {
+      transform: rotate(360deg);
+   }
+}
+
+button .loading-spinner {
+   margin: 0 10px;
+}
+
+/* Tick Animation ================================= */
+
+button .tick-animation-container {
+   margin: 0 14px 4px 14px;
+}
+
+.tick-animation-container {
+   $anim-width: 16px;
+   $anim-height: 8px;
+   $stroke-width: 3px;
+   $animation-time: 0.7s;
+
+   >div {
+      transform: rotate(-45deg);
+      width: $anim-width;
+      height: $anim-height;
+      position: relative;
+
+      div {
+         position: absolute;
+         background-color: grey;
+      }
+
+      div:nth-child(1) {
+         width: $stroke-width;
+         height: $anim-height;
+         animation: vertical-line $animation-time cubic-bezier(0.55, 0.06, 0.68, 0.19);
+      }
+
+      div:nth-child(2) {
+         top: $anim-height - $stroke-width;
+         left: $stroke-width - 1;
+         height: $stroke-width;
+         width: $anim-width;
+         animation: horizontal-line $animation-time cubic-bezier(0.55, 0.06, 0.68, 0.19);
+      }
+
+      @keyframes vertical-line {
+         0% {
+            height: 0;
+         }
+
+         50% {
+            height: $anim-height;
+         }
+      }
+
+      @keyframes horizontal-line {
+         0% {
+            width: 0;
+         }
+
+         50% {
+            width: 0;
+         }
+
+         100% {
+            width: $anim-width;
+         }
+      }
+   }
+}

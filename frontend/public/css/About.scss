@@ -1,0 +1,33 @@
+/* About Page ====================================== */
+
+@use "./variables";
+
+.about-page {
+   min-height: variables.$full-height;
+   padding: 50px;
+   text-align: center;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+
+   .container {
+      margin: auto;
+      width: fit-content;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 1.2em;
+
+      table {
+         tr {
+            td {
+               padding: 5px;
+            }
+
+            td:nth-child(1) {
+               text-align: right;
+            }
+         }
+      }
+   }
+}

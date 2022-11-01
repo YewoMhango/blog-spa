@@ -1,0 +1,289 @@
+/* Navbar ========================================= */
+
+@use "sass:math";
+@use "./variables";
+
+nav.navbar {
+   $padding: 5px;
+   $nav-inner-height: (variables.$nav-height - $padding) - $padding;
+
+   width: 100%;
+   height: variables.$nav-height;
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+   align-items: center;
+   padding: $padding;
+   background-color: black;
+   color: white;
+   position: fixed;
+   left: 0;
+   top: 0;
+   z-index: 10;
+
+   aside.overlay {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: -1;
+      height: variables.$nav-height;
+      width: variables.$nav-height;
+      border-bottom-right-radius: 100%;
+      background-color: rgba(0, 0, 0, 0.3);
+   }
+
+   button.menu-button,
+   button.search-button {
+      width: $nav-inner-height;
+      height: $nav-inner-height;
+      background-color: transparent;
+      border: none;
+      padding: 0;
+      position: relative;
+
+      @media screen and (min-width: 800px) {
+         display: none;
+      }
+   }
+
+   button.menu-button:hover,
+   button.search-button:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+   }
+
+   button.menu-button {
+      div {
+         left: 25%;
+         position: absolute;
+         height: 2px;
+         width: 50%;
+         background-color: white;
+      }
+
+      div:nth-child(1) {
+         top: 37%;
+      }
+
+      div:nth-child(2) {
+         bottom: 37%;
+      }
+   }
+
+   .logo {
+      margin: 0 20px;
+      height: math.div($nav-inner-height, 1.45);
+
+      img {
+         height: 100%;
+      }
+   }
+
+   .nav-right {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+
+      .nav-links {
+         display: flex;
+         flex-direction: row;
+         justify-content: space-between;
+         align-items: center;
+         height: variables.$nav-height;
+         margin: 0;
+         padding: 0;
+
+         li {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            height: variables.$nav-height;
+            margin: 0;
+
+            a {
+               display: flex;
+               flex-direction: row;
+               justify-content: center;
+               align-items: center;
+               height: variables.$nav-height;
+               padding: 15px;
+               color: inherit;
+               text-decoration: none;
+               font-weight: 500;
+            }
+         }
+
+         .loading-spinner-container {
+            padding: 15px;
+         }
+
+         @media screen and (max-width: 800px) {
+            width: 200px;
+            flex-direction: column;
+            justify-content: flex-start;
+            height: calc(100% - variables.$nav-height);
+            position: fixed;
+            top: variables.$nav-height;
+            left: -200px;
+            background-color: rgb(30, 30, 30);
+            opacity: 0;
+
+            li {
+               width: 100%;
+
+               a {
+                  width: 100%;
+               }
+
+               a:hover {
+                  background-color: rgba(255, 255, 255, 0.1);
+               }
+            }
+         }
+
+         @media screen and (min-width: 800px) {
+            li {
+               a {
+                  border-top: 3px solid transparent;
+                  border-bottom: 3px solid transparent;
+               }
+
+               a:hover {
+                  border-bottom: 3px solid rgb(180, 180, 180);
+                  background-color: rgba(255, 255, 255, 0.050);
+               }
+            }
+         }
+      }
+
+      form {
+         input[type="search"] {
+            margin: 0 20px;
+            padding: 5px 10px;
+            border: none;
+         }
+
+         @media screen and (max-width: 800px) {
+            position: absolute;
+            left: 0;
+            top: variables.$nav-height;
+            width: 100%;
+            height: 0;
+            overflow-y: hidden;
+            background-color: rgb(20, 20, 20);
+            padding: 0 20px;
+
+            input[type="search"] {
+               background-color: rgba(35, 35, 35);
+               color: white;
+               height: 100%;
+               width: 100%;
+               margin: 0;
+            }
+         }
+
+         @media screen and (min-width: 800px) {
+            input[type="search"] {
+               width: 150px;
+            }
+
+            input[type="search"]:focus {
+               width: 230px;
+            }
+         }
+      }
+   }
+
+   button.search-button {
+      >div {
+         position: absolute;
+      }
+
+      >div:nth-child(1) {
+         top: 25%;
+         left: 25%;
+         width: 40%;
+         height: 40%;
+         border-color: white;
+         border-style: solid;
+         border-width: 2.5px;
+         border-radius: 100%;
+      }
+
+      >div:nth-child(2) {
+         top: 67%;
+         left: 52%;
+         background-color: white;
+         height: 2px;
+         width: 25%;
+         position: absolute;
+         transform: rotate(45deg);
+      }
+   }
+}
+
+@media screen and (max-width: 800px) {
+   nav.navbar.menu-open {
+      position: fixed;
+      left: 0;
+      top: 0;
+
+      aside.overlay {
+         height: 200vmax;
+         width: 200vmax;
+      }
+
+      button.menu-button {
+         div:nth-child(1) {
+            top: 47%;
+            transform: rotate(135deg);
+         }
+
+         div:nth-child(2) {
+            bottom: 47%;
+            transform: rotate(-135deg);
+         }
+      }
+
+      .nav-right .nav-links {
+         left: 0;
+         opacity: 1;
+      }
+   }
+
+   nav.navbar.search-showing {
+      .nav-right {
+         .nav-links {
+            top: variables.$nav-height + variables.$nav-height;
+            height: calc(100vh - variables.$nav-height - variables.$nav-height);
+         }
+
+         form {
+            height: variables.$nav-height;
+            padding: 5px 20px;
+         }
+
+         button.search-button {
+            div:nth-child(1) {
+               transform: rotate(-45deg);
+               left: 25%;
+               top: 45%;
+               width: 50%;
+               height: 0;
+               border-radius: 0;
+               position: absolute;
+               background-color: white;
+               border-width: 1px;
+            }
+
+            div:nth-child(2) {
+               transform: rotate(-135deg);
+               left: 25%;
+               top: 45%;
+               width: 50%;
+            }
+         }
+      }
+   }
+}

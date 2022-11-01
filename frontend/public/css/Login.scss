@@ -1,0 +1,60 @@
+/* Login Page ===================================== */
+
+@use "./variables";
+
+.login-page,
+.sign-in-page {
+    text-align: center;
+    min-height: variables.$full-height;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .login-form,
+    .sign-in-form {
+        height: fit-content;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 50px;
+        background-color: white;
+        width: fit-content;
+
+        @media screen and (max-width: 550px) {
+            min-height: variables.$full-height;
+            justify-content: center;
+            padding: 50px 30px;
+            width: 100%;
+        }
+
+        h1 {
+            margin: 0 0 20px 0;
+        }
+
+        .input-container,
+        button {
+            font-size: 1.2em;
+        }
+
+        p {
+            margin: 10px;
+        }
+
+        input {
+            width: 100%;
+            border-radius: 5px;
+            border: 1px solid rgb(212, 212, 212);
+            padding: 8px 15px;
+            font-size: inherit;
+            margin: 5px;
+        }
+
+        button {
+            width: 100%;
+            margin: 20px 0 10px 0;
+        }
+
+    }
+}
