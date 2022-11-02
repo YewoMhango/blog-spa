@@ -323,7 +323,7 @@ button .tick-animation-container {
 
 /* Login Page ===================================== */
 .login-page,
-.sign-in-page {
+.sign-up-page {
   text-align: center;
   min-height: calc(100vh - 50px);
   height: fit-content;
@@ -333,9 +333,9 @@ button .tick-animation-container {
   justify-content: center;
 }
 .login-page .login-form,
-.login-page .sign-in-form,
-.sign-in-page .login-form,
-.sign-in-page .sign-in-form {
+.login-page .sign-up-form,
+.sign-up-page .login-form,
+.sign-up-page .sign-up-form {
   height: fit-content;
   display: flex;
   flex-direction: column;
@@ -346,9 +346,9 @@ button .tick-animation-container {
 }
 @media screen and (max-width: 550px) {
   .login-page .login-form,
-.login-page .sign-in-form,
-.sign-in-page .login-form,
-.sign-in-page .sign-in-form {
+.login-page .sign-up-form,
+.sign-up-page .login-form,
+.sign-up-page .sign-up-form {
     min-height: calc(100vh - 50px);
     justify-content: center;
     padding: 50px 30px;
@@ -356,31 +356,31 @@ button .tick-animation-container {
   }
 }
 .login-page .login-form h1,
-.login-page .sign-in-form h1,
-.sign-in-page .login-form h1,
-.sign-in-page .sign-in-form h1 {
+.login-page .sign-up-form h1,
+.sign-up-page .login-form h1,
+.sign-up-page .sign-up-form h1 {
   margin: 0 0 20px 0;
 }
 .login-page .login-form .input-container,
 .login-page .login-form button,
-.login-page .sign-in-form .input-container,
-.login-page .sign-in-form button,
-.sign-in-page .login-form .input-container,
-.sign-in-page .login-form button,
-.sign-in-page .sign-in-form .input-container,
-.sign-in-page .sign-in-form button {
+.login-page .sign-up-form .input-container,
+.login-page .sign-up-form button,
+.sign-up-page .login-form .input-container,
+.sign-up-page .login-form button,
+.sign-up-page .sign-up-form .input-container,
+.sign-up-page .sign-up-form button {
   font-size: 1.2em;
 }
 .login-page .login-form p,
-.login-page .sign-in-form p,
-.sign-in-page .login-form p,
-.sign-in-page .sign-in-form p {
+.login-page .sign-up-form p,
+.sign-up-page .login-form p,
+.sign-up-page .sign-up-form p {
   margin: 10px;
 }
 .login-page .login-form input,
-.login-page .sign-in-form input,
-.sign-in-page .login-form input,
-.sign-in-page .sign-in-form input {
+.login-page .sign-up-form input,
+.sign-up-page .login-form input,
+.sign-up-page .sign-up-form input {
   width: 100%;
   border-radius: 5px;
   border: 1px solid rgb(212, 212, 212);
@@ -389,9 +389,9 @@ button .tick-animation-container {
   margin: 5px;
 }
 .login-page .login-form button,
-.login-page .sign-in-form button,
-.sign-in-page .login-form button,
-.sign-in-page .sign-in-form button {
+.login-page .sign-up-form button,
+.sign-up-page .login-form button,
+.sign-up-page .sign-up-form button {
   width: 100%;
   margin: 20px 0 10px 0;
 }
@@ -610,7 +610,7 @@ nav.navbar .nav-right .nav-links .loading-spinner-container {
 }
 nav.navbar .nav-right form input[type=search] {
   margin: 0 20px;
-  padding: 5px 10px;
+  padding: 6px 10px;
   border: none;
 }
 @media screen and (max-width: 800px) {
@@ -685,6 +685,9 @@ nav.navbar button.search-button > div:nth-child(2) {
     left: 0;
     opacity: 1;
   }
+  nav.navbar.menu-open .nav-right .nav-links .loading-spinner-container {
+    display: none;
+  }
   nav.navbar.search-showing .nav-right .nav-links {
     top: 100px;
     height: calc(100vh - 50px - 50px);
@@ -711,6 +714,101 @@ nav.navbar button.search-button > div:nth-child(2) {
     width: 50%;
   }
 }
+/* Post Page ======================================= */
+.post-page {
+  max-width: 1200px;
+  background-color: white;
+  margin: 0 auto;
+}
+.post-page header {
+  background-color: rgb(18, 18, 18);
+  padding: 20px;
+}
+.post-page header .container {
+  max-width: 740px;
+  margin: 0 auto;
+  color: white;
+}
+.post-page header .container .summary {
+  font-size: 18px;
+  color: grey;
+  padding: 20px 0;
+  font-weight: 500;
+}
+.post-page header .container .details {
+  padding-top: 10px;
+  font-size: 14px;
+  color: grey;
+  border-top: 1px rgb(56, 56, 56) solid;
+}
+@media screen and (min-width: 800px) {
+  .post-page header .container h1 {
+    font-size: 60px;
+  }
+  .post-page header .container .summary {
+    font-size: 24px;
+  }
+}
+.post-page .content {
+  padding: 20px;
+  color: hsl(220deg, 17%, 15%);
+  font-size: 20px;
+}
+.post-page .content .container {
+  max-width: 740px;
+  margin: 0 auto;
+}
+.post-page .header.loading-animation {
+  padding: 20px;
+  background: none;
+}
+.post-page .header.loading-animation .container {
+  max-width: 740px;
+  margin: 0 auto;
+}
+.post-page .header.loading-animation .container h1 {
+  height: 40px;
+  margin-bottom: 10px;
+  width: 80%;
+}
+.post-page .header.loading-animation .container .summary {
+  height: 22px;
+  margin: 10px 0;
+  padding: 0;
+}
+.post-page .header.loading-animation .container .details {
+  border-top: none;
+  height: 14px;
+  max-width: 250px;
+}
+@media screen and (min-width: 800px) {
+  .post-page .header.loading-animation .container h1 {
+    height: 60px;
+  }
+  .post-page .header.loading-animation .container .summary {
+    height: 24px;
+  }
+}
+.post-page .content .container .line {
+  height: 20px;
+  margin: 10px 0;
+}
+.post-page .content .container p:nth-child(1) .line:nth-child(3) {
+  width: 70%;
+}
+.post-page .content .container p:nth-child(2) .line:nth-child(3) {
+  width: 90%;
+}
+.post-page .content .container p:nth-child(3) .line:nth-child(3) {
+  width: 80%;
+}
+.post-page .content .container p:nth-child(4) .line:nth-child(3) {
+  width: 90%;
+}
+.post-page .content .container p:nth-child(5) .line:nth-child(3) {
+  width: 60%;
+}
+
 /* Writer Page ====================================== */
 .writer-page .container {
   min-height: calc(100vh - 50px);
@@ -916,7 +1014,6 @@ a:hover {
 }
 
 .loading-error {
-  min-height: calc(100vh - 50px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -924,9 +1021,14 @@ a:hover {
   font-family: "IBM Plex Mono", monospace;
   font-size: 24px;
   color: #f55;
-  padding: 50px;
+  padding: 100px 50px;
   text-align: center;
   transition: none;
+}
+@media screen and (max-width: 600px) {
+  .loading-error {
+    padding: 20px;
+  }
 }
 .loading-error * {
   transition: none;
