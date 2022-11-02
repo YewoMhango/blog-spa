@@ -3,7 +3,7 @@
 @use "./variables";
 
 .login-page,
-.sign-in-page {
+.sign-up-page {
     text-align: center;
     min-height: variables.$full-height;
     height: fit-content;
@@ -13,7 +13,7 @@
     justify-content: center;
 
     .login-form,
-    .sign-in-form {
+    .sign-up-form {
         height: fit-content;
         display: flex;
         flex-direction: column;
