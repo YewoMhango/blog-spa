@@ -24,7 +24,7 @@ page shared req =
     Page.advanced
         { view = view shared
         , init = init req
-        , update = update
+        , update = update req
         , subscriptions = subscriptions
         }
 
@@ -70,10 +70,15 @@ init req =
 type Msg
     = GotPosts (Result Http.Error Post)
     | NavbarMsg Navbar.Msg
+    | NavbarInputMsg String
 
 
-update : Msg -> Model -> ( Model, Effect Msg )
-update msg model =
+update : Request.With Params -> Msg -> Model -> ( Model, Effect Msg )
+update req_ msg model =
+    let
+        req =
+            Navbar.requestFromRequestWithParams req_
+    in
     case msg of
         GotPosts result ->
             ( { model | post = RequestDone result }
@@ -81,7 +86,10 @@ update msg model =
             )
 
         NavbarMsg innerMsg ->
-            Navbar.update model innerMsg
+            Navbar.update model innerMsg req
+
+        NavbarInputMsg value ->
+            Navbar.updateSearchInput model value req
 
 
 getPost : String -> Cmd Msg
@@ -125,6 +133,7 @@ view shared model =
             shared
             model.navbarModel
             NavbarMsg
+            NavbarInputMsg
         , viewPost model.post
         ]
     }

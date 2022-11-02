@@ -16,10 +16,10 @@ import View exposing (View)
 
 
 page : Shared.Model -> Request.With Params -> Page.With Model Msg
-page shared _ =
+page shared req =
     Page.advanced
         { init = init shared
-        , update = update
+        , update = update req
         , view = view shared
         , subscriptions = subscriptions
         }
@@ -66,6 +66,7 @@ init shared =
 
 type Msg
     = NavbarMsg Navbar.Msg
+    | NavbarInputMsg String
     | EmailChanged String
     | PasswordChanged String
     | FirstNameChanged String
@@ -74,11 +75,14 @@ type Msg
     | Uploaded (Result Http.Error String)
 
 
-update : Msg -> Model -> ( Model, Effect Msg )
-update msg model =
+update : Request.Request -> Msg -> Model -> ( Model, Effect Msg )
+update req msg model =
     case msg of
         NavbarMsg navMsg ->
-            Navbar.update model navMsg
+            Navbar.update model navMsg req
+
+        NavbarInputMsg value ->
+            Navbar.updateSearchInput model value req
 
         EmailChanged email ->
             ( { model | email = email }, Effect.none )
@@ -132,16 +136,16 @@ view : Shared.Model -> Model -> View Msg
 view shared model =
     { title = "Sign Up"
     , body =
-        [ Navbar.view shared model.navbarModel NavbarMsg
-        , signInView model
+        [ Navbar.view shared model.navbarModel NavbarMsg NavbarInputMsg
+        , signUpView model
         ]
     }
 
 
-signInView : Model -> Html.Html Msg
-signInView model =
-    main_ [ class "sign-in-page" ]
-        [ div [ class "sign-in-form" ]
+signUpView : Model -> Html.Html Msg
+signUpView model =
+    main_ [ class "sign-up-page" ]
+        [ div [ class "sign-up-form" ]
             [ h1 [] [ text "Sign Up" ]
             , input
                 [ id "email"
@@ -179,68 +183,8 @@ signInView model =
                 , onInput PasswordChanged
                 ]
                 []
-            , div [ style "color" "red" ]
-                [ text <|
-                    case model.signupStatus of
-                        ResponseReturned result ->
-                            case result of
-                                Err error ->
-                                    case error of
-                                        Http.Timeout ->
-                                            "The request timed-out"
-
-                                        Http.NetworkError ->
-                                            "A network error occured while trying to sign up"
-
-                                        Http.BadStatus 400 ->
-                                            "Incorrect details provided"
-
-                                        _ ->
-                                            "Signing up failed"
-
-                                Ok _ ->
-                                    ""
-
-                        _ ->
-                            ""
-                ]
-            , button
-                [ class "confirm"
-                , disabled <|
-                    flipBool <|
-                        allNotEmptyStrings
-                            [ model.password
-                            , model.email
-                            , model.firstName
-                            , model.lastName
-                            ]
-                            && String.length model.password
-                            > 5
-                            && String.contains "@" model.email
-                            && (case model.signupStatus of
-                                    ResponseReturned (Ok _) ->
-                                        False
-
-                                    _ ->
-                                        True
-                               )
-                , onClick SignupButtonPressed
-                ]
-                (case model.signupStatus of
-                    SigningUp ->
-                        [ smallLoadingSpinner True, text "Signing Up" ]
-
-                    EnteringData ->
-                        [ text "Sign Up" ]
-
-                    ResponseReturned result ->
-                        case result of
-                            Err _ ->
-                                [ text "Sign Up" ]
-
-                            Ok _ ->
-                                [ tickAnimation "white" True, text "Sign Up Successful" ]
-                )
+            , errorMessage model
+            , signUpButton model
             , p []
                 [ text "Or "
                 , a
@@ -250,4 +194,74 @@ signInView model =
                 , text " if you already have an account"
                 ]
             ]
+        ]
+
+
+signUpButton : Model -> Html.Html Msg
+signUpButton model =
+    button
+        [ class "confirm"
+        , disabled <|
+            flipBool <|
+                allNotEmptyStrings
+                    [ model.password
+                    , model.email
+                    , model.firstName
+                    , model.lastName
+                    ]
+                    && String.length model.password
+                    > 5
+                    && String.contains "@" model.email
+                    && (case model.signupStatus of
+                            ResponseReturned (Ok _) ->
+                                False
+
+                            _ ->
+                                True
+                       )
+        , onClick SignupButtonPressed
+        ]
+        (case model.signupStatus of
+            SigningUp ->
+                [ smallLoadingSpinner True, text "Signing Up" ]
+
+            EnteringData ->
+                [ text "Sign Up" ]
+
+            ResponseReturned result ->
+                case result of
+                    Err _ ->
+                        [ text "Sign Up" ]
+
+                    Ok _ ->
+                        [ tickAnimation "white" True, text "Sign Up Successful" ]
+        )
+
+
+errorMessage : Model -> Html.Html Msg
+errorMessage model =
+    div [ style "color" "red" ]
+        [ text <|
+            case model.signupStatus of
+                ResponseReturned result ->
+                    case result of
+                        Err error ->
+                            case error of
+                                Http.Timeout ->
+                                    "The request timed-out"
+
+                                Http.NetworkError ->
+                                    "A network error occured while trying to sign up"
+
+                                Http.BadStatus 400 ->
+                                    "Incorrect details provided"
+
+                                _ ->
+                                    "Signing up failed"
+
+                        Ok _ ->
+                            ""
+
+                _ ->
+                    ""
         ]

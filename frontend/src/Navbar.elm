@@ -1,9 +1,11 @@
-module Navbar exposing (Model, Msg, init, update, view)
+module Navbar exposing (Model, Msg, init, requestFromRequestWithParams, update, updateSearchInput, view)
 
 import Effect exposing (Effect)
+import Gen.Route
 import Html exposing (a, aside, button, div, form, img, input, li, nav, ol, text)
-import Html.Attributes exposing (action, class, href, name, placeholder, src, type_)
-import Html.Events exposing (onClick)
+import Html.Attributes exposing (action, class, href, name, placeholder, src, type_, value)
+import Html.Events exposing (onClick, onInput, onSubmit)
+import Request
 import Shared
 import Utils exposing (flipBool, smallLoadingSpinner)
 
@@ -11,22 +13,25 @@ import Utils exposing (flipBool, smallLoadingSpinner)
 type alias Model =
     { menuOpen : Bool
     , searchFieldShown : Bool
+    , searchInput : String
     }
 
 
 init : Model
 init =
-    Model False False
+    Model False False ""
 
 
 type Msg
     = ToggleMenu
     | SearchInputOpened
+    | SearchInputEntered String
+    | FormSubmit
     | Logout
 
 
-update : { m | navbarModel : Model } -> Msg -> ( { m | navbarModel : Model }, Effect msg )
-update mainModel msg =
+update : { m | navbarModel : Model } -> Msg -> Request.Request -> ( { m | navbarModel : Model }, Effect msg )
+update mainModel msg req =
     let
         navbarModel =
             mainModel.navbarModel
@@ -57,9 +62,33 @@ update mainModel msg =
         Logout ->
             ( mainModel, Effect.fromShared Shared.SignOut )
 
+        SearchInputEntered input ->
+            ( { mainModel
+                | navbarModel =
+                    { navbarModel
+                        | searchInput =
+                            input
+                    }
+              }
+            , Effect.none
+            )
 
-view : Shared.Model -> Model -> (Msg -> msg) -> Html.Html msg
-view shared model toMsg =
+        FormSubmit ->
+            ( mainModel
+            , Effect.fromCmd <|
+                Request.pushRoute
+                    (Gen.Route.Search__Keywords_ { keywords = navbarModel.searchInput })
+                    req
+            )
+
+
+updateSearchInput : { m | navbarModel : Model } -> String -> Request.Request -> ( { m | navbarModel : Model }, Effect msg )
+updateSearchInput mainModel input req =
+    update mainModel (SearchInputEntered input) req
+
+
+view : Shared.Model -> Model -> (Msg -> msg) -> (String -> msg) -> Html.Html msg
+view shared model toMsg inputMsg =
     let
         className =
             "navbar"
@@ -116,14 +145,26 @@ view shared model toMsg =
                       ]
                     ]
                 )
-            , form [ action "/search" ]
+            , form [ action "/search", onSubmit <| toMsg FormSubmit ]
                 [ input
                     [ type_ "search"
                     , placeholder "Search"
                     , name "s"
+                    , onInput inputMsg
+                    , value model.searchInput
                     ]
                     []
                 ]
             , button [ class "search-button", onClick (toMsg SearchInputOpened) ] [ div [] [], div [] [] ]
             ]
         ]
+
+
+requestFromRequestWithParams : Request.With params -> Request.Request
+requestFromRequestWithParams req =
+    { url = req.url
+    , key = req.key
+    , route = req.route
+    , params = ()
+    , query = req.query
+    }

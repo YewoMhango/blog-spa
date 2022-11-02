@@ -12,10 +12,10 @@ import View exposing (View)
 
 
 page : Shared.Model -> Request.With Params -> Page.With Model Msg
-page shared _ =
+page shared req =
     Page.advanced
         { init = init
-        , update = update
+        , update = update req
         , view = view shared
         , subscriptions = subscriptions
         }
@@ -40,13 +40,17 @@ init =
 
 type Msg
     = NavbarMsg Navbar.Msg
+    | NavbarInputMsg String
 
 
-update : Msg -> Model -> ( Model, Effect Msg )
-update msg model =
+update : Request.Request -> Msg -> Model -> ( Model, Effect Msg )
+update req msg model =
     case msg of
         NavbarMsg navMsg ->
-            Navbar.update model navMsg
+            Navbar.update model navMsg req
+
+        NavbarInputMsg value ->
+            Navbar.updateSearchInput model value req
 
 
 
@@ -65,7 +69,7 @@ subscriptions _ =
 view : Shared.Model -> Model -> View Msg
 view shared model =
     { title = "About Me"
-    , body = [ Navbar.view shared model.navbarModel NavbarMsg, viewAbout ]
+    , body = [ Navbar.view shared model.navbarModel NavbarMsg NavbarInputMsg, viewAbout ]
     }
 
 

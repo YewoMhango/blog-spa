@@ -15,10 +15,10 @@ import View exposing (View)
 
 
 page : Shared.Model -> Request.With Params -> Page.With Model Msg
-page shared _ =
+page shared req =
     Page.advanced
         { init = init shared.csrfToken
-        , update = update
+        , update = update req
         , view = view shared
         , subscriptions = subscriptions
         }
@@ -61,17 +61,21 @@ init csrfToken =
 
 type Msg
     = NavbarMsg Navbar.Msg
+    | NavbarInputMsg String
     | EmailChanged String
     | PasswordChanged String
     | LoginButtonPressed
     | Uploaded (Result Http.Error String)
 
 
-update : Msg -> Model -> ( Model, Effect Msg )
-update msg model =
+update : Request.Request -> Msg -> Model -> ( Model, Effect Msg )
+update req msg model =
     case msg of
         NavbarMsg navMsg ->
-            Navbar.update model navMsg
+            Navbar.update model navMsg req
+
+        NavbarInputMsg value ->
+            Navbar.updateSearchInput model value req
 
         EmailChanged email ->
             ( { model | email = email }, Effect.none )
@@ -133,7 +137,7 @@ view : Shared.Model -> Model -> View Msg
 view shared model =
     { title = "Login"
     , body =
-        [ Navbar.view shared model.navbarModel NavbarMsg
+        [ Navbar.view shared model.navbarModel NavbarMsg NavbarInputMsg
         , loginView model
         ]
     }

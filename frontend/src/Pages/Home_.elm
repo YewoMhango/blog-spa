@@ -19,11 +19,11 @@ import View exposing (View)
 
 
 page : Shared.Model -> Request -> Page.With Model Msg
-page shared _ =
+page shared req =
     Page.advanced
         { view = view shared
         , init = init
-        , update = update
+        , update = update req
         , subscriptions = subscriptions
         }
 
@@ -61,10 +61,11 @@ init =
 type Msg
     = GotPosts (Result Http.Error (List PostDetails))
     | NavbarMsg Navbar.Msg
+    | NavbarInputMsg String
 
 
-update : Msg -> Model -> ( Model, Effect Msg )
-update msg model =
+update : Request.Request -> Msg -> Model -> ( Model, Effect Msg )
+update req msg model =
     case msg of
         GotPosts result ->
             ( { model | posts = RequestDone result }
@@ -72,7 +73,10 @@ update msg model =
             )
 
         NavbarMsg innerMsg ->
-            Navbar.update model innerMsg
+            Navbar.update model innerMsg req
+
+        NavbarInputMsg value ->
+            Navbar.updateSearchInput model value req
 
 
 getPosts : Cmd Msg
@@ -116,6 +120,7 @@ view shared model =
             shared
             model.navbarModel
             NavbarMsg
+            NavbarInputMsg
         , viewPosts model.posts
         ]
     }

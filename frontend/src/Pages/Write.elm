@@ -80,6 +80,7 @@ init csrfToken =
 
 type Msg
     = NavbarMsg Navbar.Msg
+    | NavbarInputMsg String
     | GotTitle String
     | GotSummary String
     | GotPostContent String
@@ -100,7 +101,10 @@ update : Request.With Params -> Msg -> Model -> ( Model, Effect Msg )
 update req msg model =
     case msg of
         NavbarMsg innerMsg ->
-            Navbar.update model innerMsg
+            Navbar.update model innerMsg req
+
+        NavbarInputMsg value ->
+            Navbar.updateSearchInput model value req
 
         GotTitle title ->
             ( { model | title = title }
@@ -200,7 +204,7 @@ view : Shared.Model -> Model -> View Msg
 view shared model =
     { title = "Write a New Blog Post"
     , body =
-        [ Navbar.view shared model.navbarModel NavbarMsg
+        [ Navbar.view shared model.navbarModel NavbarMsg NavbarInputMsg
         , viewWriter model
         ]
     }
