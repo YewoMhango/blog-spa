@@ -51,8 +51,18 @@ init req =
     let
         params =
             getQueryParams req
+
+        navModel =
+            Navbar.init
     in
-    ( Model Loading Navbar.init params req
+    ( Model Loading
+        { navModel
+            | searchInput =
+                Maybe.withDefault "" <|
+                    Url.percentDecode params.searchTerm
+        }
+        params
+        req
     , Effect.fromCmd <|
         getPosts params
     )
