@@ -58,18 +58,24 @@
       }
    }
 
+   $code-background: #e5e5e5;
+
    code {
-      background-color: #e0e0e0;
+      background-color: $code-background;
    }
 
    pre {
-      padding: 20px;
-      background-color: #e0e0e0;
-      overflow-x: scroll;
-      font-size: 0.9em;
+      padding: 0;
+      background-color: $code-background;
+      font-size: 0.8em;
+
+      code.hljs {
+         padding: 20px;
+         overflow-x: auto;
+      }
    }
 
-   img {
-      max-width: 80%;
-   }
+   // img {
+   //    max-width: 80%;
+   // }
 }

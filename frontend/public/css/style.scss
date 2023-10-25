@@ -1,7 +1,7 @@
 @use "./variables";
 @use "./NotFound.scss";
-@use "./About.scss";
 @use "./Animations.scss";
+@use "./Footer.scss";
 @use "./Home.scss";
 @use "./Login.scss";
 @use "./Markdown.scss";
@@ -89,7 +89,7 @@ button.confirm {
    padding: 10px 50px;
    font-size: 1.1em;
    border-radius: 5px;
-   background-color: #1266f1;
+   background-color: variables.$accent-purple;
    color: white;
    font-weight: bold;
    border: none;
@@ -100,7 +100,7 @@ button.confirm {
 }
 
 button.confirm:hover {
-   background-color: #0945a7;
+   background-color: variables.$accent-purple-darker;
 }
 
 button.confirm:disabled {
@@ -109,12 +109,12 @@ button.confirm:disabled {
 }
 
 a {
-   color: rgb(110, 110, 110);
+   color: variables.$accent-purple;
    text-decoration: none;
 }
 
 a:hover {
-   color: rgb(70, 70, 70);
+   color: variables.$accent-purple-darker;
    text-decoration: underline;
 }
 

@@ -1,2 +1,6 @@
 $nav-height: 50px;
-$full-height: calc(100vh - $nav-height);
+$footer-height: 50px;
+$full-height: calc(100vh - $nav-height - $footer-height);
+$accent-purple: hsl(273, 80%, 52%);
+$accent-purple-darker: hsl(273, 80%, 36%);
+$accent-purple-light: hsl(273, 80%, 68%);
