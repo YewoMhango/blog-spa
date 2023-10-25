@@ -1006,6 +1006,7 @@ h6 {
 
 button {
   cursor: pointer;
+  font-family: inherit;
 }
 
 button.confirm {
