@@ -486,7 +486,7 @@ footer .social-links a img {
 }
 .post-page .content .container img,
 .writer-page .container .input-and-preview .preview img {
-  max-width: 80%;
+  max-width: 100%;
   max-height: 80vh;
   margin: auto;
   display: block;
