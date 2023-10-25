@@ -1,6 +1,7 @@
 module Pages.Home_ exposing (Model, Msg, PostDetails, page, postsLoadingAnimation, renderPosts, renderPostsData)
 
 import Effect exposing (Effect)
+import Footer
 import Html exposing (Html, a, div, h1, img, main_, p, text)
 import Html.Attributes exposing (class, href, src)
 import Http
@@ -122,6 +123,7 @@ view shared model =
             NavbarMsg
             NavbarInputMsg
         , viewPosts model.posts
+        , Footer.view
         ]
     }
 

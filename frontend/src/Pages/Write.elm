@@ -1,7 +1,8 @@
-module Pages.Write exposing (Model, Msg, page)
+module Pages.Write exposing (Model, Msg, page, viewThumbnailPreview)
 
 import Effect exposing (Effect)
 import File exposing (File)
+import Footer
 import Gen.Params.Write exposing (Params)
 import Gen.Route
 import Html exposing (Html, a, button, div, h1, h3, input, label, main_, table, td, text, textarea, tr)
@@ -206,6 +207,7 @@ view shared model =
     , body =
         [ Navbar.view shared model.navbarModel NavbarMsg NavbarInputMsg
         , viewWriter model
+        , Footer.view
         ]
     }
 

@@ -1,6 +1,7 @@
 module Pages.NotFound exposing (Model, Msg, page)
 
 import Effect exposing (Effect)
+import Footer
 import Gen.Params.NotFound exposing (Params)
 import Html exposing (a, div, h1, h3, main_, p, text)
 import Html.Attributes exposing (class, href)
@@ -72,6 +73,7 @@ view shared model =
     , body =
         [ Navbar.view shared model.navbarModel NavbarMsg NavbarInputMsg
         , view404
+        , Footer.view
         ]
     }
 

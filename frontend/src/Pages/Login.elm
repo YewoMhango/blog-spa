@@ -1,6 +1,7 @@
 module Pages.Login exposing (Model, Msg, handleLoginApiResultCsrf, page)
 
 import Effect exposing (Effect)
+import Footer
 import Gen.Params.Login exposing (Params)
 import Html exposing (a, button, div, h1, input, main_, p, text)
 import Html.Attributes exposing (class, disabled, href, id, name, placeholder, style, type_)
@@ -139,6 +140,7 @@ view shared model =
     , body =
         [ Navbar.view shared model.navbarModel NavbarMsg NavbarInputMsg
         , loginView model
+        , Footer.view
         ]
     }
 

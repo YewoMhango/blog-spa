@@ -1,0 +1,37 @@
+footer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    background-color: black;
+    padding: 0px;
+
+    .yewo-logo,
+    .social-links {
+        padding: 0 10px;
+    }
+
+    .yewo-logo,
+    .social-links,
+    .social-links a {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .social-links {
+        padding: 0 10px;
+
+        a {
+            padding: 19px;
+
+            @media screen and (min-width: 600px) {
+                padding: 19px 25px;
+            }
+
+            img {
+                height: 16px;
+            }
+        }
+    }
+}

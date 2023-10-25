@@ -2,6 +2,7 @@ module Pages.Search.Keywords_ exposing (Model, Msg, page)
 
 import Dict
 import Effect exposing (Effect)
+import Footer
 import Gen.Params.Search.Keywords_ exposing (Params)
 import Html exposing (Html, div, h2, main_, p, text)
 import Html.Attributes exposing (class)
@@ -153,6 +154,7 @@ view shared model =
             NavbarMsg
             NavbarInputMsg
         , viewPosts model
+        , Footer.view
         ]
     }
 

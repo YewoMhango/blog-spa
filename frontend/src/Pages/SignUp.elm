@@ -1,6 +1,7 @@
 module Pages.SignUp exposing (Model, Msg, page)
 
 import Effect exposing (Effect)
+import Footer
 import Gen.Params.SignUp exposing (Params)
 import Html exposing (a, button, div, h1, input, main_, p, text)
 import Html.Attributes exposing (class, disabled, href, id, name, placeholder, style, type_, value)
@@ -138,6 +139,7 @@ view shared model =
     , body =
         [ Navbar.view shared model.navbarModel NavbarMsg NavbarInputMsg
         , signUpView model
+        , Footer.view
         ]
     }
 
