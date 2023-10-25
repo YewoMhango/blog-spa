@@ -10,7 +10,7 @@ cp -r "./public/css/IBM Plex Mono/" "../app/static/css/IBM Plex Mono/"
 cp -r ./public/css/style.css ../app/static/css/style.css
 cp -r ./public/css/style.css.map ../app/static/css/style.css.map
 cp -r ./public/favicon.ico ../app/static/favicon.ico
-cp -r ./public/preview-image.svg ../app/static/preview-image.svg
+cp -r ./public/preview-image.jpg ../app/static/preview-image.jpg
 cp -r ./public/logo.svg ../app/static/logo.svg
 cp -r ./public/gmail.svg ../app/static/gmail.svg
 cp -r ./public/github.svg ../app/static/github.svg

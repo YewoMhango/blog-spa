@@ -20,7 +20,7 @@ def index(request: HttpRequest, resource: str):
         "description": "This is the personal blogging site of Yewo Mhango",
         "title": "Yewo's Blog",
         "image": request.build_absolute_uri(
-            static("preview-image.svg")
+            static("preview-image.jpg")
         ),
         "url": request.build_absolute_uri(),
     }
