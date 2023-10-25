@@ -1,9 +1,10 @@
-module Pages.Post.Title_ exposing (Model, Msg, page)
+module Pages.Post.Title_ exposing (Model, Msg, Post, page, postLoadingAnimation)
 
 import Effect exposing (Effect)
+import Footer
 import Gen.Params.Post.Title_ exposing (Params)
-import Html exposing (Html, div, h1, header, main_, p, text)
-import Html.Attributes exposing (class)
+import Html exposing (Html, a, div, h1, header, main_, p, span, text)
+import Html.Attributes exposing (class, href)
 import Http
 import Json.Decode exposing (Decoder, field, int, map7, string)
 import Markdown
@@ -11,7 +12,7 @@ import Navbar
 import Page
 import Request
 import Shared
-import Utils exposing (renderHttpError)
+import Utils exposing (RemoteData(..), renderHttpError)
 import View exposing (View)
 
 
@@ -31,11 +32,6 @@ page shared req =
 
 
 -- MODEL
-
-
-type RemoteData data error
-    = Loading
-    | RequestDone (Result error data)
 
 
 type alias Model =
@@ -68,7 +64,7 @@ init req =
 
 
 type Msg
-    = GotPosts (Result Http.Error Post)
+    = GotPost (Result Http.Error Post)
     | NavbarMsg Navbar.Msg
     | NavbarInputMsg String
 
@@ -80,8 +76,16 @@ update req_ msg model =
             Navbar.requestFromRequestWithParams req_
     in
     case msg of
-        GotPosts result ->
-            ( { model | post = RequestDone result }
+        GotPost result ->
+            ( { model
+                | post =
+                    case result of
+                        Ok post ->
+                            Successful post
+
+                        Err error ->
+                            Failed error
+              }
             , Effect.none
             )
 
@@ -96,7 +100,7 @@ getPost : String -> Cmd Msg
 getPost postSLug =
     Http.get
         { url = "/api/post/" ++ postSLug
-        , expect = Http.expectJson GotPosts postDecoder
+        , expect = Http.expectJson GotPost postDecoder
         }
 
 
@@ -134,7 +138,8 @@ view shared model =
             model.navbarModel
             NavbarMsg
             NavbarInputMsg
-        , viewPost model.post
+        , viewPost model shared.user.canPost
+        , Footer.view
         ]
     }
 
@@ -145,46 +150,49 @@ viewTitle model =
         Loading ->
             "Loading blog post..."
 
-        RequestDone result ->
-            case result of
-                Ok post ->
-                    post.title
+        Successful post ->
+            post.title
 
-                Err _ ->
-                    "Error loading blog post"
+        Failed _ ->
+            "Error loading blog post"
 
 
-viewPost : RemoteData Post Http.Error -> Html Msg
-viewPost postsData =
+viewPost : Model -> Bool -> Html Msg
+viewPost model canEdit =
     main_ [ class "post-page" ]
-        (case postsData of
+        (case model.post of
             Loading ->
                 postLoadingAnimation
 
-            RequestDone result ->
-                case result of
-                    Ok post ->
-                        [ header []
-                            [ div [ class "container" ]
-                                [ h1 [] [ text post.title ]
-                                , div [ class "summary" ] [ text post.summary ]
-                                , div [ class "details" ]
-                                    [ text
-                                        (post.author
-                                            ++ " | "
-                                            ++ post.date
-                                            ++ " | "
-                                            ++ String.fromInt post.views
-                                            ++ " views"
-                                        )
-                                    ]
+            Successful post ->
+                [ header []
+                    [ div [ class "container" ]
+                        [ h1 [] [ text post.title ]
+                        , div [ class "summary" ] [ text post.summary ]
+                        , div [ class "details" ]
+                            [ span []
+                                [ text
+                                    (post.author
+                                        ++ " | "
+                                        ++ post.date
+                                    )
                                 ]
-                            ]
-                        , div [ class "content" ] [ Markdown.toHtml [ class "container" ] post.content ]
-                        ]
+                            , if canEdit then
+                                span []
+                                    [ text " | "
+                                    , a [ href ("/post/" ++ model.urlSlug ++ "/edit") ] [ text "Edit" ]
+                                    ]
 
-                    Err error ->
-                        [ renderHttpError error ]
+                              else
+                                text ""
+                            ]
+                        ]
+                    ]
+                , div [ class "content" ] [ Markdown.toHtml [ class "container" ] post.content ]
+                ]
+
+            Failed error ->
+                [ renderHttpError error ]
         )
 
 
