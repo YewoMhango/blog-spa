@@ -115,7 +115,6 @@ view shared model toMsg inputMsg =
             [ ol [ class "nav-links", type_ "none" ]
                 (List.concat
                     [ [ li [] [ a [ href "/" ] [ text "Home" ] ]
-                      , li [] [ a [ href "/about" ] [ text "About" ] ]
                       ]
                     , if shared.user.isAuthenticated then
                         List.append
