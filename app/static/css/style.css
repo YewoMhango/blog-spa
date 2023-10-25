@@ -1008,6 +1008,11 @@ button {
   cursor: pointer;
 }
 
+input,
+button {
+  font-family: inherit;
+}
+
 button.confirm {
   display: inline-block;
   padding: 10px 50px;
