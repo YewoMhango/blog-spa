@@ -1,16 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/css/style.css" />
-  </head>
-  <body>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/stackoverflow-light.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+
+<body>
     <script src="/dist/elm.js"></script>
     <script>
-      Elm.Main.init({
-        flags: "",
-      });
+        Elm.Main.init({
+            flags: "",
+        });
+
+        const mutationCallback = function (mutationsList, observer) {
+            hljs.highlightAll();
+        };
+
+        const observerConfig = { childList: true, subtree: true };
+        const observer = new MutationObserver(mutationCallback);
+        observer.observe(document.body, observerConfig);
     </script>
-  </body>
+</body>
+
 </html>

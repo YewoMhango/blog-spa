@@ -1,24 +1,35 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
-    <link
-      rel="shortcut icon"
-      href="{% static 'favicon.ico' %}"
-      type="image/x-icon"
-    />
-  </head>
-  <body>
-    <form>{% csrf_token %}</form>
-    <script src="{% static 'dist/elm.js' %}"></script>
-    <script>
-      Elm.Main.init({
-        flags: document.querySelector("form [name='csrfmiddlewaretoken']")
-          .value,
-      });
-    </script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon" />
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/stackoverflow-light.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+
+<body>
+  <form>{% csrf_token %}</form>
+  <script src="{% static 'dist/elm.js' %}"></script>
+  <script>
+    Elm.Main.init({
+      flags: document.querySelector(
+        "form [name='csrfmiddlewaretoken']"
+      ).value,
+    });
+
+    const mutationCallback = function (mutationsList, observer) {
+      hljs.highlightAll();
+    };
+
+    const observerConfig = { childList: true, subtree: true };
+    const observer = new MutationObserver(mutationCallback);
+    observer.observe(document.body, observerConfig);
+  </script>
+</body>
+
 </html>
