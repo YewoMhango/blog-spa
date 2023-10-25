@@ -69,7 +69,15 @@ update : Request.Request -> Msg -> Model -> ( Model, Effect Msg )
 update req msg model =
     case msg of
         GotPosts result ->
-            ( { model | posts = RequestDone result }
+            ( { model
+                | posts =
+                    case result of
+                        Ok post ->
+                            Successful post
+
+                        Err error ->
+                            Failed error
+              }
             , Effect.none
             )
 
@@ -161,18 +169,16 @@ renderPostsData postsData noPosts =
             div [ class "post-list" ] <|
                 List.repeat 8 postsLoadingAnimation
 
-        RequestDone result ->
-            case result of
-                Ok posts ->
-                    if List.length posts > 0 then
-                        div [ class "post-list" ] <|
-                            renderPosts posts
+        Successful posts ->
+            if List.length posts > 0 then
+                div [ class "post-list" ] <|
+                    renderPosts posts
 
-                    else
-                        noPosts
+            else
+                noPosts
 
-                Err error ->
-                    renderHttpError error
+        Failed error ->
+            renderHttpError error
 
 
 renderPosts : List PostDetails -> List (Html msg)

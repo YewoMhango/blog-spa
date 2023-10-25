@@ -125,7 +125,15 @@ update : Request.With Params -> Msg -> Model -> ( Model, Effect Msg )
 update req msg model =
     case msg of
         GotPosts result ->
-            ( { model | posts = RequestDone result }
+            ( { model
+                | posts =
+                    case result of
+                        Ok post ->
+                            Successful post
+
+                        Err error ->
+                            Failed error
+              }
             , Effect.none
             )
 

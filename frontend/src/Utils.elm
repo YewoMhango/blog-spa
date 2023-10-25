@@ -35,7 +35,8 @@ allNotEmptyStrings list =
 
 type RemoteData data error
     = Loading
-    | RequestDone (Result error data)
+    | Successful data
+    | Failed error
 
 
 renderHttpError : Http.Error -> Html msg
