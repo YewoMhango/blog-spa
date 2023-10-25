@@ -779,37 +779,6 @@ nav.navbar button.search-button > div:nth-child(2) {
   max-width: 740px;
   margin: 0 auto;
 }
-.post-page .header.loading-animation {
-  padding: 20px;
-  background: none;
-}
-.post-page .header.loading-animation .container {
-  max-width: 740px;
-  margin: 0 auto;
-}
-.post-page .header.loading-animation .container h1 {
-  height: 40px;
-  margin-bottom: 10px;
-  width: 80%;
-}
-.post-page .header.loading-animation .container .summary {
-  height: 22px;
-  margin: 10px 0;
-  padding: 0;
-}
-.post-page .header.loading-animation .container .details {
-  border-top: none;
-  height: 14px;
-  max-width: 250px;
-}
-@media screen and (min-width: 800px) {
-  .post-page .header.loading-animation .container h1 {
-    height: 60px;
-  }
-  .post-page .header.loading-animation .container .summary {
-    height: 24px;
-  }
-}
 .post-page .content .container .line {
   height: 20px;
   margin: 10px 0;
@@ -828,6 +797,45 @@ nav.navbar button.search-button > div:nth-child(2) {
 }
 .post-page .content .container p:nth-child(5) .line:nth-child(3) {
   width: 60%;
+}
+
+.post-page .header.loading-animation,
+.writer-page .header.loading-animation {
+  padding: 20px;
+  background: none;
+}
+.post-page .header.loading-animation .container,
+.writer-page .header.loading-animation .container {
+  max-width: 740px;
+  margin: 0 auto;
+}
+.post-page .header.loading-animation .container h1,
+.writer-page .header.loading-animation .container h1 {
+  height: 40px;
+  margin-bottom: 10px;
+  width: 80%;
+}
+.post-page .header.loading-animation .container .summary,
+.writer-page .header.loading-animation .container .summary {
+  height: 22px;
+  margin: 10px 0;
+  padding: 0;
+}
+.post-page .header.loading-animation .container .details,
+.writer-page .header.loading-animation .container .details {
+  border-top: none;
+  height: 14px;
+  max-width: 250px;
+}
+@media screen and (min-width: 800px) {
+  .post-page .header.loading-animation .container h1,
+  .writer-page .header.loading-animation .container h1 {
+    height: 60px;
+  }
+  .post-page .header.loading-animation .container .summary,
+  .writer-page .header.loading-animation .container .summary {
+    height: 24px;
+  }
 }
 
 /* Writer Page ====================================== */
