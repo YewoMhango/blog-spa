@@ -22,8 +22,8 @@ def favicon(request: HttpRequest):
     return HttpResponseRedirect("/static/favicon.ico")
 
 
-def view_post(request: HttpRequest, post: str):
-    blog_post = Blog.objects.get(slug=post)
+def view_post(request: HttpRequest, post_slug: str):
+    blog_post = Blog.objects.get(slug=post_slug)
     blog_post.views += 1
     blog_post.save()
 
@@ -36,9 +36,8 @@ class BlogsListView(generics.ListAPIView):
     def get_queryset(self):
         qp = self.request.query_params
 
+        # Search keywords, and page number for pagination
         keywords, page = qp.get("s") or "", qp.get("page")
-
-        print("Keywords:", keywords, "Page:", page)
 
         return reduce(
             lambda qs, keyword:
@@ -117,12 +116,38 @@ def publish(request: HttpRequest):
 
     reqDict = request.POST.dict()
 
-    newBlog = Blog(title=reqDict["title"],
-                   summary=reqDict["summary"],
-                   content=reqDict["postContent"],
-                   image=request.FILES.get("thumbnail"),
-                   author=request.user)
+    newBlog = Blog(
+        title=reqDict["title"],
+        summary=reqDict["summary"],
+        content=reqDict["postContent"],
+        image=request.FILES.get("thumbnail"),
+        author=request.user
+    )
 
     newBlog.save()
 
     return HttpResponse(newBlog.slug)
+
+
+@require_POST
+def update_post(request: HttpRequest, post_slug: str):
+    if not (request.user.is_authenticated and request.user.is_staff):
+        return HttpResponse("You need to be a staff user to publish", status=401)
+
+    if not Blog.objects.filter(slug=post_slug).exists():
+        return HttpResponse("The post does not exist", status=401)
+
+    blog = Blog.objects.get(slug=post_slug)
+    reqDict = request.POST.dict()
+
+    blog.title = reqDict["title"]
+    blog.summary = reqDict["summary"]
+    blog.content = reqDict["postContent"]
+
+    thumbnail = request.FILES.get("thumbnail")
+    if thumbnail:
+        blog.image = thumbnail
+
+    blog.save()
+
+    return HttpResponse("")

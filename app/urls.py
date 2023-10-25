@@ -19,8 +19,13 @@ from . import views
 
 urlpatterns = [
     path('favicon.ico', views.favicon, name='favicon'),
-    path("api/post/<slug:post>", views.view_post, name='view_post'),
+    path("api/post/<slug:post_slug>", views.view_post, name='view_post'),
     path('api/publish', views.publish, name='publish'),
+    path(
+        'api/update_post/<slug:post_slug>',
+        views.update_post,
+        name='update_post',
+    ),
     path('api/posts', views.BlogsListView.as_view(), name="posts"),
     path('api/sign-up', views.sign_up, name="sign-up"),
     path('api/login', views.login_view, name="login"),
