@@ -1,4 +1,4 @@
-
+import re
 from functools import reduce
 from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
@@ -7,6 +7,7 @@ from django.shortcuts import render
 from django.views.decorators.http import require_POST
 from django.contrib.auth import authenticate, login, logout
 from django.middleware import csrf
+from django.templatetags.static import static
 
 from app.serializers import BlogSerializer, BlogsListSerializer
 from app.models import Blog, User
@@ -15,11 +16,34 @@ from app.models import Blog, User
 
 
 def index(request: HttpRequest, resource: str):
-    return render(request, 'index.html')
+    metadata = {
+        "description": "This is the personal blogging site of Yewo Mhango",
+        "title": "Yewo's Blog",
+        "image": request.build_absolute_uri(
+            static("preview-image.svg")
+        ),
+        "url": request.build_absolute_uri(),
+    }
+
+    post_url_regex = r'^post/([^/]+)$'
+    match = re.match(post_url_regex, resource)
+    if match:
+        url_slug = match.group(1)
+        queryset = Blog.objects.filter(slug=url_slug)
+        if queryset.exists():
+            blog_post = queryset[0]
+            metadata["description"] = blog_post.summary
+            metadata["image"] = request.build_absolute_uri(
+                blog_post.thumbnail.url
+            )
+            metadata["title"] = blog_post.title
+            metadata["author"] = blog_post.author.__str__()
+
+    return render(request, 'index.html', metadata)
 
 
 def favicon(request: HttpRequest):
-    return HttpResponseRedirect("/static/favicon.ico")
+    return HttpResponseRedirect(static("favicon.ico"))
 
 
 def view_post(request: HttpRequest, post_slug: str):
@@ -103,10 +127,10 @@ def logout_view(request: HttpRequest):
 
 
 def user_auth_details(request: HttpRequest):
-    return JsonResponse(
-        {'authenticated': request.user.is_authenticated,
-         'canpost': request.user.is_staff}
-    )
+    return JsonResponse({
+        'authenticated': request.user.is_authenticated,
+        'canpost': request.user.is_staff
+    })
 
 
 @require_POST
