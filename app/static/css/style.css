@@ -1,7 +1,7 @@
 @charset "UTF-8";
 /* 404 Page ======================================== */
 .not-found-page {
-  min-height: calc(100vh - 50px);
+  min-height: calc(100vh - 50px - 50px);
   padding: 50px;
   color: rgb(50, 50, 50);
   text-align: center;
@@ -23,30 +23,6 @@
 .not-found-page .container p a {
   color: grey;
   font-weight: 600;
-}
-
-/* About Page ====================================== */
-.about-page {
-  min-height: calc(100vh - 50px);
-  padding: 50px;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.about-page .container {
-  margin: auto;
-  width: fit-content;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-size: 1.2em;
-}
-.about-page .container table tr td {
-  padding: 5px;
-}
-.about-page .container table tr td:nth-child(1) {
-  text-align: right;
 }
 
 /* Loading Animation ================================ */
@@ -175,10 +151,44 @@ button .tick-animation-container {
   }
 }
 
+footer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  background-color: black;
+  padding: 0px;
+}
+footer .yewo-logo,
+footer .social-links {
+  padding: 0 10px;
+}
+footer .yewo-logo,
+footer .social-links,
+footer .social-links a {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+footer .social-links {
+  padding: 0 10px;
+}
+footer .social-links a {
+  padding: 19px;
+}
+@media screen and (min-width: 600px) {
+  footer .social-links a {
+    padding: 19px 25px;
+  }
+}
+footer .social-links a img {
+  height: 16px;
+}
+
 /* Homepage and Search Page ======================= */
 .no-search-term {
   font-size: 1.2em;
-  min-height: calc(100vh - 50px);
+  min-height: calc(100vh - 50px - 50px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -192,7 +202,7 @@ button .tick-animation-container {
 
 .no-posts-to-show {
   width: 100%;
-  height: calc(100vh - 50px);
+  height: calc(100vh - 50px - 50px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -207,7 +217,7 @@ button .tick-animation-container {
 .search-results {
   background-color: white;
   padding: 10px;
-  min-height: calc(100vh - 50px);
+  min-height: calc(100vh - 50px - 50px);
   max-width: 1280px;
   margin: 0 auto;
 }
@@ -218,7 +228,7 @@ button .tick-animation-container {
 }
 @media screen and (min-width: 800px) {
   .homepage .heading,
-.search-results .heading {
+  .search-results .heading {
     margin-left: 40px;
     margin-right: 40px;
   }
@@ -300,14 +310,14 @@ button .tick-animation-container {
 }
 @media screen and (min-width: 550px) {
   .homepage .post-list,
-.search-results .post-list {
+  .search-results .post-list {
     display: grid;
     grid-template-columns: 50% 50%;
   }
 }
 @media screen and (min-width: 800px) {
   .homepage .post-list,
-.search-results .post-list {
+  .search-results .post-list {
     display: grid;
     grid-template-columns: 33% 33% 33%;
     padding: 20px 30px;
@@ -315,7 +325,7 @@ button .tick-animation-container {
 }
 @media screen and (min-width: 1000px) {
   .homepage .post-list,
-.search-results .post-list {
+  .search-results .post-list {
     display: grid;
     grid-template-columns: 25% 25% 25% 25%;
   }
@@ -325,7 +335,7 @@ button .tick-animation-container {
 .login-page,
 .sign-up-page {
   text-align: center;
-  min-height: calc(100vh - 50px);
+  min-height: calc(100vh - 50px - 50px);
   height: fit-content;
   display: flex;
   flex-direction: column;
@@ -346,10 +356,10 @@ button .tick-animation-container {
 }
 @media screen and (max-width: 550px) {
   .login-page .login-form,
-.login-page .sign-up-form,
-.sign-up-page .login-form,
-.sign-up-page .sign-up-form {
-    min-height: calc(100vh - 50px);
+  .login-page .sign-up-form,
+  .sign-up-page .login-form,
+  .sign-up-page .sign-up-form {
+    min-height: calc(100vh - 50px - 50px);
     justify-content: center;
     padding: 50px 30px;
     width: 100%;
@@ -369,6 +379,7 @@ button .tick-animation-container {
 .sign-up-page .login-form button,
 .sign-up-page .sign-up-form .input-container,
 .sign-up-page .sign-up-form button {
+  font-family: inherit;
   font-size: 1.2em;
 }
 .login-page .login-form p,
@@ -460,18 +471,18 @@ button .tick-animation-container {
 }
 .post-page .content .container code,
 .writer-page .container .input-and-preview .preview code {
-  background-color: #e0e0e0;
+  background-color: #e5e5e5;
 }
 .post-page .content .container pre,
 .writer-page .container .input-and-preview .preview pre {
-  padding: 20px;
-  background-color: #e0e0e0;
-  overflow-x: scroll;
-  font-size: 0.9em;
+  padding: 0;
+  background-color: #e5e5e5;
+  font-size: 0.8em;
 }
-.post-page .content .container img,
-.writer-page .container .input-and-preview .preview img {
-  max-width: 80%;
+.post-page .content .container pre code.hljs,
+.writer-page .container .input-and-preview .preview pre code.hljs {
+  padding: 20px;
+  overflow-x: auto;
 }
 
 /* Navbar ========================================= */
@@ -511,7 +522,7 @@ nav.navbar button.search-button {
 }
 @media screen and (min-width: 800px) {
   nav.navbar button.menu-button,
-nav.navbar button.search-button {
+  nav.navbar button.search-button {
     display: none;
   }
 }
@@ -571,7 +582,7 @@ nav.navbar .nav-right .nav-links li a {
   padding: 15px;
   color: inherit;
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
 }
 nav.navbar .nav-right .nav-links .loading-spinner-container {
   padding: 15px;
@@ -595,6 +606,7 @@ nav.navbar .nav-right .nav-links .loading-spinner-container {
     width: 100%;
   }
   nav.navbar .nav-right .nav-links li a:hover {
+    color: hsl(273, 80%, 52%);
     background-color: rgba(255, 255, 255, 0.1);
   }
 }
@@ -604,8 +616,9 @@ nav.navbar .nav-right .nav-links .loading-spinner-container {
     border-bottom: 3px solid transparent;
   }
   nav.navbar .nav-right .nav-links li a:hover {
-    border-bottom: 3px solid rgb(180, 180, 180);
-    background-color: rgba(255, 255, 255, 0.05);
+    border-bottom: 3px solid hsl(273, 80%, 52%);
+    background-color: hsla(273, 80%, 52%, 0.1);
+    color: hsl(273, 80%, 68%);
   }
 }
 nav.navbar .nav-right form input[type=search] {
@@ -719,6 +732,7 @@ nav.navbar button.search-button > div:nth-child(2) {
   max-width: 1200px;
   background-color: white;
   margin: 0 auto;
+  min-height: calc(100vh - 50px - 50px);
 }
 .post-page header {
   background-color: rgb(18, 18, 18);
@@ -751,7 +765,7 @@ nav.navbar button.search-button > div:nth-child(2) {
 }
 .post-page .content {
   padding: 20px;
-  color: hsl(220deg, 17%, 15%);
+  color: hsl(220, 17%, 15%);
   font-size: 20px;
 }
 .post-page .content .container {
@@ -811,7 +825,7 @@ nav.navbar button.search-button > div:nth-child(2) {
 
 /* Writer Page ====================================== */
 .writer-page .container {
-  min-height: calc(100vh - 50px);
+  min-height: calc(100vh - 50px - 50px);
   padding: 20px;
   background-color: white;
   max-width: 1000px;
@@ -886,14 +900,14 @@ nav.navbar button.search-button > div:nth-child(2) {
     background-color: transparent;
   }
   .writer-page .container .post-content .input-and-preview #content-input,
-.writer-page .container .post-content .input-and-preview .preview {
+  .writer-page .container .post-content .input-and-preview .preview {
     display: none;
     margin: 0;
     border-radius: 0;
     border-top: none;
   }
   .writer-page .container .post-content .input-and-preview #content-input.selected,
-.writer-page .container .post-content .input-and-preview .preview.selected {
+  .writer-page .container .post-content .input-and-preview .preview.selected {
     display: block;
     width: 100%;
     padding: 30px;
@@ -984,7 +998,7 @@ button.confirm {
   padding: 10px 50px;
   font-size: 1.1em;
   border-radius: 5px;
-  background-color: #1266f1;
+  background-color: hsl(273, 80%, 52%);
   color: white;
   font-weight: bold;
   border: none;
@@ -995,7 +1009,7 @@ button.confirm {
 }
 
 button.confirm:hover {
-  background-color: #0945a7;
+  background-color: hsl(273, 80%, 36%);
 }
 
 button.confirm:disabled {
@@ -1004,12 +1018,12 @@ button.confirm:disabled {
 }
 
 a {
-  color: rgb(110, 110, 110);
+  color: hsl(273, 80%, 52%);
   text-decoration: none;
 }
 
 a:hover {
-  color: rgb(70, 70, 70);
+  color: hsl(273, 80%, 36%);
   text-decoration: underline;
 }
 
