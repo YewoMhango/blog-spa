@@ -484,6 +484,13 @@ footer .social-links a img {
   padding: 20px;
   overflow-x: auto;
 }
+.post-page .content .container img,
+.writer-page .container .input-and-preview .preview img {
+  max-width: 80%;
+  max-height: 80vh;
+  margin: auto;
+  display: block;
+}
 
 /* Navbar ========================================= */
 nav.navbar {
