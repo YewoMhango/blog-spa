@@ -78,5 +78,6 @@ class Blog(models.Model):
         return self.title
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.title)
+        if self.slug.strip() == "":
+            self.slug = slugify(self.title)
         super(Blog, self).save()
