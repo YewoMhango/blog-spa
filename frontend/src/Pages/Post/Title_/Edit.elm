@@ -5,7 +5,7 @@ import File exposing (File)
 import Footer
 import Gen.Params.Edit.Title_ exposing (Params)
 import Gen.Route
-import Html exposing (Html, a, button, div, h1, h3, input, label, main_, table, td, text, textarea, tr)
+import Html exposing (Html, a, button, div, h1, h3, input, label, main_, p, table, td, text, textarea, tr)
 import Html.Attributes exposing (accept, class, disabled, for, href, id, multiple, target, type_, value)
 import Html.Events exposing (on, onClick, onInput)
 import Http
@@ -13,7 +13,7 @@ import Json.Decode exposing (Decoder, field, int, map7, string)
 import Markdown
 import Navbar exposing (requestFromRequestWithParams)
 import Page
-import Pages.Post.Title_ exposing (Post, postLoadingAnimation)
+import Pages.Post.Title_ exposing (Post)
 import Pages.Write exposing (viewThumbnailPreview)
 import Request
 import Shared exposing (CSRFToken)
@@ -287,7 +287,7 @@ viewWriter model =
         [ div [ class "container" ]
             (case model.post of
                 Loading ->
-                    postLoadingAnimation
+                    editPageLoadingAnimation
 
                 Successful post ->
                     [ h1 [] [ text "Write a New Blog Post" ]
@@ -436,3 +436,17 @@ isPublishable post model =
 
     else
         False
+
+
+editPageLoadingAnimation : List (Html msg)
+editPageLoadingAnimation =
+    [ div [ class "loading-animation" ]
+        [ div [ class "line heading" ] []
+        , div [ class "line" ] []
+        , div [ class "line" ] []
+        , div [ class "line" ] []
+        , div [ class "line format" ] []
+        , div [ class "image content" ] []
+        , div [ class "line button" ] []
+        ]
+    ]

@@ -141,4 +141,41 @@
          }
       }
    }
+
+   .loading-animation {
+      padding: 20px;
+      background: none;
+      max-width: 740px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .line {
+         height: 1.5em;
+         margin: 8px 0;
+         padding: 0;
+         width: 100%;
+      }
+
+      .line.heading {
+         width: 60%;
+         height: 2em;
+      }
+
+      .line.format {
+         width: 50%;
+      }
+
+      .line.button {
+         width: 100%;
+         max-width: 250px;
+         height: 3em;
+      }
+
+      .content {
+         margin: 16px 0;
+         height: 400px;
+      }
+   }
 }

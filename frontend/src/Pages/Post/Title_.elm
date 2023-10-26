@@ -1,4 +1,4 @@
-module Pages.Post.Title_ exposing (Model, Msg, Post, page, postLoadingAnimation)
+module Pages.Post.Title_ exposing (Model, Msg, Post, page)
 
 import Effect exposing (Effect)
 import Footer
