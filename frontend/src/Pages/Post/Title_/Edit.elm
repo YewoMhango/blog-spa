@@ -400,7 +400,7 @@ viewWriter model =
                                     ]
 
                                 _ ->
-                                    [ text "Publish Edit"
+                                    [ text "Publish"
                                     ]
                             )
                         ]
