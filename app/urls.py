@@ -32,6 +32,11 @@ urlpatterns = [
     path('api/logout', views.logout_view, name="logout"),
     path('api/user-details', views.user_auth_details, name="user-details"),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('', views.index, {'resource': ''}, name='index'),
-    path('<path:resource>', views.index, name='index')
+    path(
+        "post/<slug:post_slug>",
+        views.view_post_server_side,
+        name='view_post_server_side',
+    ),
+    path('', views.homepage, name='homepage'),
+    path('<path:resource>', views.spa_html, name='index')
 ]

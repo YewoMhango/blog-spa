@@ -1,0 +1,38 @@
+<!-- prettier-ignore -->
+{% extends 'base.html' %}
+
+{% load markdown_extras %}
+
+{% block head_title %}
+{{ title }}
+{% endblock %}
+
+{% block meta_tags %}
+<meta name="description" content="{{ description }}">
+<meta property="og:title" content="{{ title }}">
+<meta property="og:image" content="{{ image }}">
+<meta property="og:description" content="{{ description }}">
+<meta property="og:url" content="{{ url }}">
+<meta name="author" content="{{ author }}">
+{% endblock %}
+
+{% block body %}
+<main class="post-page">
+    <header>
+        <div class="container">
+            <h1>{{ post.title }}</h1>
+            <div class="summary">{{ post.summary }}</div>
+            <div class="details">
+                <span>
+                    By {{ author }} | {{ post.date|date:"D d M Y" }}
+                </span>
+            </div>
+        </div>
+    </header>
+    <div class="content">
+        <div class="container">
+            {{ post.content | markdown | safe }}
+        </div>
+    </div>
+</main>
+{% endblock %}

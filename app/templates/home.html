@@ -1,0 +1,31 @@
+<!-- prettier-ignore -->
+{% extends 'base.html' %}
+
+{% block head_title %}
+{{ title }}
+{% endblock %}
+
+{% block meta_tags %}
+<meta name="description" content="{{ description }}">
+<meta property="og:title" content="{{ title }}">
+<meta property="og:image" content="{{ image }}">
+<meta property="og:description" content="{{ description }}">
+<meta property="og:url" content="{{ url }}">
+{% endblock %}
+
+{% block body %}
+<main class="homepage">
+    <div class="post-list">
+        {% for post in posts %}
+        <div class="post">
+            <a href="{% url 'view_post_server_side' post.slug %}">
+                <img class="thumbnail" src="{{ post.thumbnail.url }}" alt="{{ post.title }}">
+                <div class="date">{{ post.date|date:"D d M Y" }}</div>
+                <h2 class="title">{{ post.title }}</h2>
+                <div class="summary">{{ post.summary }}</div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</main>
+{% endblock %}

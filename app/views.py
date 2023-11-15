@@ -15,7 +15,7 @@ from app.models import Blog, User
 # Create your views here.
 
 
-def index(request: HttpRequest, resource: str):
+def spa_html(request: HttpRequest, resource: str):
     metadata = {
         "description": "This is the personal blogging site of Yewo Mhango",
         "title": "Yewo's Blog",
@@ -25,21 +25,40 @@ def index(request: HttpRequest, resource: str):
         "url": request.build_absolute_uri(),
     }
 
-    post_url_regex = r'^post/([^/]+)$'
-    match = re.match(post_url_regex, resource)
-    if match:
-        url_slug = match.group(1)
-        queryset = Blog.objects.filter(slug=url_slug)
-        if queryset.exists():
-            blog_post = queryset[0]
-            metadata["description"] = blog_post.summary
-            metadata["image"] = request.build_absolute_uri(
-                blog_post.thumbnail.url
-            )
-            metadata["title"] = blog_post.title
-            metadata["author"] = blog_post.author.__str__()
-
     return render(request, 'index.html', metadata)
+
+
+def homepage(request: HttpRequest):
+    return render(
+        request,
+        'home.html',
+        {
+            "description": "This is the personal blogging site of Yewo Mhango",
+            "title": "Yewo's Blog",
+            "image": request.build_absolute_uri(
+                static("preview-image.jpg")
+            ),
+            "url": request.build_absolute_uri(),
+            "posts": Blog.objects.all(),
+        }
+    )
+
+
+def view_post_server_side(request: HttpRequest, post_slug: str):
+    blog_post = Blog.objects.get(slug=post_slug)
+
+    metadata = {
+        "description": blog_post.summary,
+        "title": blog_post.title,
+        "image": request.build_absolute_uri(
+            blog_post.thumbnail.url
+        ),
+        "url": request.build_absolute_uri(),
+        "author": blog_post.author.__str__(),
+        "post": blog_post,
+    }
+
+    return render(request, 'post.html', metadata)
 
 
 def favicon(request: HttpRequest):
@@ -48,9 +67,6 @@ def favicon(request: HttpRequest):
 
 def view_post(request: HttpRequest, post_slug: str):
     blog_post = Blog.objects.get(slug=post_slug)
-    blog_post.views += 1
-    blog_post.save()
-
     return JsonResponse(BlogSerializer(blog_post).data)
 
 

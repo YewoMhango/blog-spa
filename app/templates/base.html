@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/stackoverflow-light.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <title>{% block head_title %} {% endblock %}</title>
+    {% block meta_tags %} {% endblock %}
+</head>
+
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo">
+            <h1 style="font: inherit; margin: 0; color: white;">Yewo's Blog</h1>
+        </a>
+        <div class="nav-right">
+            <ol class="nav-links">
+                <li>
+                    <a href="/">Home</a>
+                </li>
+                <li>
+                    <a href="/login">Login</a>
+                </li>
+                <li>
+                    <a href="/sign-up">Sign-Up</a>
+                </li>
+            </ol>
+        </div>
+    </nav>
+    {% block body %} {% endblock %}
+    <style>
+        footer .social-links a {
+            color: white;
+        }
+    </style>
+    <footer>
+        <div class="social-links">
+            <a href="mailto:mhangoyewoh@gmail.com" target="_blank">
+                <img src="/static/gmail.svg" alt="Mail"> &nbsp; Mail
+            </a>
+            <a href="https://www.linkedin.com/in/yewo-mhango/" target="_blank">
+                <img src="/static/LinkedIn.svg" alt="Linked-in"> &nbsp; Linked-In
+            </a>
+            <a href="https://github.com/YewoMhango" target="_blank">
+                <img src="/static/github.svg" alt="GitHub"> &nbsp; GitHub
+            </a>
+            <a href="https://yewomhango.github.io" target="_blank">
+                <img src="/static/web.svg" alt="Website"> &nbsp; Website
+            </a>
+        </div>
+    </footer>
+    <form>{% csrf_token %}</form>
+    <!-- <script src="{% static 'dist/elm.js' %}"></script> -->
+    <script>
+        // Elm.Main.init({
+        //     flags: document.querySelector(
+        //         "form [name='csrfmiddlewaretoken']"
+        //     ).value,
+        // });
+
+        hljs.highlightAll();
+
+        const mutationCallback = function (mutationsList, observer) {
+            hljs.highlightAll();
+        };
+
+        const observerConfig = { childList: true, subtree: true };
+        const observer = new MutationObserver(mutationCallback);
+        observer.observe(document.body, observerConfig);
+    </script>
+</body>
+
+</html>
