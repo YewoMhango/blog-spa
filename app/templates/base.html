@@ -56,13 +56,13 @@
         </div>
     </footer>
     <form>{% csrf_token %}</form>
-    <!-- <script src="{% static 'dist/elm.js' %}"></script> -->
+    <script src="{% static 'dist/elm.js' %}"></script>
     <script>
-        // Elm.Main.init({
-        //     flags: document.querySelector(
-        //         "form [name='csrfmiddlewaretoken']"
-        //     ).value,
-        // });
+        Elm.Main.init({
+            flags: document.querySelector(
+                "form [name='csrfmiddlewaretoken']"
+            ).value,
+        });
 
         hljs.highlightAll();
 
