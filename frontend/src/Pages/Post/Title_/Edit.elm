@@ -9,7 +9,7 @@ import Html exposing (Html, a, button, div, h1, h3, input, label, main_, p, tabl
 import Html.Attributes exposing (accept, class, disabled, for, href, id, multiple, target, type_, value)
 import Html.Events exposing (on, onClick, onInput)
 import Http
-import Json.Decode exposing (Decoder, field, int, map7, string)
+import Json.Decode exposing (Decoder, field, int, map6, string)
 import Markdown
 import Navbar exposing (requestFromRequestWithParams)
 import Page
@@ -106,14 +106,13 @@ getPost postSLug =
 
 postDecoder : Decoder Post
 postDecoder =
-    map7 Post
+    map6 Post
         (field "title" string)
         (field "summary" string)
         (field "author" string)
         (field "date" string)
         (field "content" string)
         (field "image" string)
-        (field "views" int)
 
 
 update : Request.With Params -> Msg -> Model -> ( Model, Effect Msg )

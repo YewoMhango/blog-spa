@@ -72,7 +72,6 @@ class Blog(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField(blank=True, default="")
     author = models.ForeignKey(User, models.CASCADE)
-    views = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.title

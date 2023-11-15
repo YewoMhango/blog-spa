@@ -6,7 +6,7 @@ import Gen.Params.Post.Title_ exposing (Params)
 import Html exposing (Html, a, div, h1, header, main_, p, span, text)
 import Html.Attributes exposing (class, href)
 import Http
-import Json.Decode exposing (Decoder, field, int, map7, string)
+import Json.Decode exposing (Decoder, field, int, map6, string)
 import Markdown
 import Navbar
 import Page
@@ -48,7 +48,6 @@ type alias Post =
     , date : String
     , content : String
     , image : String
-    , views : Int
     }
 
 
@@ -106,14 +105,13 @@ getPost postSLug =
 
 postDecoder : Decoder Post
 postDecoder =
-    map7 Post
+    map6 Post
         (field "title" string)
         (field "summary" string)
         (field "author" string)
         (field "date" string)
         (field "content" string)
         (field "image" string)
-        (field "views" int)
 
 
 
