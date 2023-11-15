@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from django.utils.text import slugify
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils import timezone
@@ -80,3 +81,6 @@ class Blog(models.Model):
         if self.slug.strip() == "":
             self.slug = slugify(self.title)
         super(Blog, self).save()
+
+    def get_absolute_url(self):
+        return reverse("view_post_server_side", args=[str(self.slug)])
