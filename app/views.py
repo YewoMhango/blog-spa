@@ -39,7 +39,7 @@ def homepage(request: HttpRequest):
                 static("preview-image.jpg")
             ),
             "url": request.build_absolute_uri(),
-            "posts": Blog.objects.all(),
+            "posts": Blog.objects.all().order_by("-date"),
         }
     )
 
