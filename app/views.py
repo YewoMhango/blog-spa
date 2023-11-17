@@ -93,8 +93,8 @@ class BlogsListView(generics.ListAPIView):
                     Blog.objects.filter(author__last_name__icontains=keyword)
                 ),
             keywords.split(),
-            Blog.objects.filter(content__icontains=keywords)
-        )
+            Blog.objects.filter(content__icontains=keywords),
+        ).order_by("-date")
 
 
 @require_POST
