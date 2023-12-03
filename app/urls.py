@@ -20,10 +20,10 @@ from . import views
 urlpatterns = [
     path('favicon.ico', views.favicon, name='favicon'),
     path("api/post/<slug:post_slug>", views.view_post, name='view_post'),
-    path('api/publish', views.publish, name='publish'),
+    path('api/publish', views.PublishBlogPost.as_view(), name='publish'),
     path(
         'api/update_post/<slug:post_slug>',
-        views.update_post,
+        views.UpdateBlogPost.as_view(),
         name='update_post',
     ),
     path(
@@ -35,7 +35,7 @@ urlpatterns = [
     path('api/sign-up', views.sign_up, name="sign-up"),
     path('api/login', views.login_view, name="login"),
     path('api/logout', views.logout_view, name="logout"),
-    path('api/user-details', views.user_auth_details, name="user-details"),
+    path('api/user-details', views.UserAuthDetails.as_view(), name="user-details"),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path(
         "post/<slug:post_slug>",
@@ -43,5 +43,5 @@ urlpatterns = [
         name='view_post_server_side',
     ),
     path('', views.homepage, name='homepage'),
-    path('<path:resource>', views.spa_html, name='index')
+    path('<path:resource>', views.spa_html, name='index'),
 ]

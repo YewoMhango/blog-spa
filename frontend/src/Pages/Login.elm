@@ -111,9 +111,9 @@ update req msg model =
 handleLoginApiResultCsrf : Result error String -> Effect msg
 handleLoginApiResultCsrf result =
     case result of
-        Ok token ->
+        Ok _ ->
             Effect.batch
-                [ Effect.fromShared <| Shared.SetCsrfToken token
+                [ Effect.fromCmd <| Shared.fetchCsrfToken ()
                 , Effect.fromShared Shared.GetAuthDetails
                 ]
 

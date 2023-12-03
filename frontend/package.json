@@ -26,5 +26,8 @@
   "dependencies": {
     "elm": "^0.19.1-5",
     "elm-spa": "^6.0.4"
+  },
+  "devDependencies": {
+    "sass": "^1.62.1"
   }
 }

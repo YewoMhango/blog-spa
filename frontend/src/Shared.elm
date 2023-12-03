@@ -1,9 +1,10 @@
-module Shared exposing
+port module Shared exposing
     ( CSRFToken
     , Flags
     , Model
     , Msg(..)
     , User
+    , fetchCsrfToken
     , init
     , subscriptions
     , update
@@ -121,6 +122,12 @@ update _ msg model =
             ( { model | csrfToken = token }, Cmd.none )
 
 
+port fetchCsrfToken : () -> Cmd msg
+
+
+port csrfTokenReciever : (String -> msg) -> Sub msg
+
+
 subscriptions : Request -> Model -> Sub Msg
 subscriptions _ _ =
-    Sub.none
+    csrfTokenReciever SetCsrfToken

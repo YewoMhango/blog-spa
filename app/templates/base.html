@@ -58,7 +58,7 @@
     <form>{% csrf_token %}</form>
     <script src="{% static 'dist/elm.js' %}"></script>
     <script>
-        Elm.Main.init({
+        let app = Elm.Main.init({
             flags: document.querySelector(
                 "form [name='csrfmiddlewaretoken']"
             ).value,
@@ -73,6 +73,21 @@
         const observerConfig = { childList: true, subtree: true };
         const observer = new MutationObserver(mutationCallback);
         observer.observe(document.body, observerConfig);
+
+        function getCsrftoken() {
+            return document.cookie.split(";")
+                .find(substring => substring.startsWith("csrftoken="))
+                .split("=")[1]
+        }
+
+        app.ports.fetchCsrfToken.subscribe(function (str) {
+            const value = getCsrftoken()
+            if (value) {
+                app.ports.csrfTokenReciever.send(value)
+            } else {
+                app.ports.csrfTokenReciever.send('')
+            }
+        })
     </script>
 </body>
 

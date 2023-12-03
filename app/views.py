@@ -1,8 +1,9 @@
-import re
+from rest_framework import generics, permissions, views
+from django.contrib.auth import authenticate
 from functools import reduce
 from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
-from rest_framework import generics
+from rest_framework import generics, permissions, views
 from django.shortcuts import render
 from django.views.decorators.http import require_POST
 from django.contrib.auth import authenticate, login, logout
@@ -10,7 +11,7 @@ from django.middleware import csrf
 from django.templatetags.static import static
 
 from app.serializers import BlogSerializer, BlogsListSerializer
-from app.models import Blog, User
+from app.models import Blog, Comment, User
 
 # Create your views here.
 
@@ -29,19 +30,17 @@ def spa_html(request: HttpRequest, resource: str):
 
 
 def homepage(request: HttpRequest):
-    return render(
-        request,
-        'home.html',
-        {
-            "description": "This is the personal blogging site of Yewo Mhango",
-            "title": "Yewo's Blog",
-            "image": request.build_absolute_uri(
-                static("preview-image.jpg")
-            ),
-            "url": request.build_absolute_uri(),
-            "posts": Blog.objects.all().order_by("-date"),
-        }
-    )
+    metadata = {
+        "description": "This is the personal blogging site of Yewo Mhango",
+        "title": "Yewo's Blog",
+        "image": request.build_absolute_uri(
+            static("preview-image.jpg")
+        ),
+        "url": request.build_absolute_uri(),
+        "posts": Blog.objects.all().order_by("-date"),
+    }
+
+    return render(request, 'home.html', metadata)
 
 
 def view_post_server_side(request: HttpRequest, post_slug: str):
@@ -142,55 +141,66 @@ def logout_view(request: HttpRequest):
     return HttpResponse("Successfully logged out")
 
 
-def user_auth_details(request: HttpRequest):
-    return JsonResponse({
-        'authenticated': request.user.is_authenticated,
-        'canpost': request.user.is_staff
-    })
+class UserAuthDetails(views.APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request: HttpRequest):
+        user: User = request.user
+
+        return JsonResponse({
+            'authenticated': user.is_authenticated,
+            'canpost': user.is_staff,
+            'email': user.email,
+            'name': user.__str__(),
+        })
 
 
-@require_POST
-def publish(request: HttpRequest):
-    if not (request.user.is_authenticated and request.user.is_staff):
-        return HttpResponse("You need to be a staff user to publish", status=401)
+class PublishBlogPost(views.APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
-    reqDict = request.POST.dict()
+    def post(self, request: HttpRequest):
+        if not request.user.is_staff:
+            return HttpResponse("You need to be a staff user to publish", status=401)
 
-    newBlog = Blog(
-        title=reqDict["title"],
-        summary=reqDict["summary"],
-        content=reqDict["postContent"],
-        image=request.FILES.get("thumbnail"),
-        author=request.user
-    )
+        reqDict = request.POST.dict()
 
-    newBlog.save()
+        newBlog = Blog(
+            title=reqDict["title"],
+            summary=reqDict["summary"],
+            content=reqDict["postContent"],
+            image=request.FILES.get("thumbnail"),
+            author=request.user
+        )
 
-    return HttpResponse(newBlog.slug)
+        newBlog.save()
+
+        return HttpResponse(newBlog.slug)
 
 
-@require_POST
-def update_post(request: HttpRequest, post_slug: str):
-    if not (request.user.is_authenticated and request.user.is_staff):
-        return HttpResponse("You need to be a staff user to publish", status=401)
+class UpdateBlogPost(views.APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
-    if not Blog.objects.filter(slug=post_slug).exists():
-        return HttpResponse("The post does not exist", status=401)
+    def post(self, request: HttpRequest, post_slug: str):
+        if not (request.user.is_staff):
+            return HttpResponse("You need to be a staff user to publish", status=401)
 
-    blog = Blog.objects.get(slug=post_slug)
-    reqDict = request.POST.dict()
+        if not Blog.objects.filter(slug=post_slug).exists():
+            return HttpResponse("The post does not exist", status=401)
 
-    blog.title = reqDict["title"]
-    blog.summary = reqDict["summary"]
-    blog.content = reqDict["postContent"]
+        blog = Blog.objects.get(slug=post_slug)
+        reqDict = request.POST.dict()
 
-    thumbnail = request.FILES.get("thumbnail")
-    if thumbnail:
-        blog.image = thumbnail
+        blog.title = reqDict["title"]
+        blog.summary = reqDict["summary"]
+        blog.content = reqDict["postContent"]
 
-    blog.save()
+        thumbnail = request.FILES.get("thumbnail")
+        if thumbnail:
+            blog.image = thumbnail
 
-    return HttpResponse("")
+        blog.save()
+
+        return HttpResponse("")
 
 
 class PublishComment(views.APIView):

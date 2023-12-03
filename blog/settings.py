@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+from datetime import timedelta
 from dotenv import load_dotenv, find_dotenv
 # import django_heroku
 from pathlib import Path
@@ -31,7 +32,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['yewo.pythonanywhere.com']
+ALLOWED_HOSTS = ['yewo.pythonanywhere.com', '127.0.0.1']
 
 
 # Application definition
@@ -112,6 +113,22 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTH_USER_MODEL = 'app.User'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ]
+}
+
+# AUTHENTICATION_BACKENDS = [
+#     'django.contrib.auth.backends.ModelBackend',
+#     'rest_framework_simplejwt.authentication.JWTAuthentication',
+# ]
+
+SIMPLE_JWT = {
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
