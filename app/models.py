@@ -84,3 +84,17 @@ class Blog(models.Model):
 
     def get_absolute_url(self):
         return reverse("view_post_server_side", args=[str(self.slug)])
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.TextField()
+    blog_post = models.ForeignKey(Blog, on_delete=models.CASCADE)
+    replying_to = models.ForeignKey(
+        "Comment", null=True, blank=True, on_delete=models.CASCADE,
+    )
+    time_created = models.DateTimeField(auto_now_add=True)
+    time_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.__str__()}: \"{self.text}\""

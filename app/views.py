@@ -191,3 +191,26 @@ def update_post(request: HttpRequest, post_slug: str):
     blog.save()
 
     return HttpResponse("")
+
+
+class PublishComment(views.APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request: HttpRequest, post_slug: str):
+        reqDict = request.POST.dict()
+
+        reply_comment_id = reqDict.get("replying_to", None)
+        reply_comment = Comment.objects.get(
+            reply_comment_id
+        ) if reply_comment_id != None else None
+
+        comment = Comment(
+            user=request.user,
+            text=reqDict["text"],
+            blop_post=Blog.objects.get(slug=post_slug),
+            replying_to=reply_comment,
+        )
+
+        comment.save()
+
+        return HttpResponse("")

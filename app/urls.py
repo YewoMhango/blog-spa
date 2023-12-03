@@ -26,6 +26,11 @@ urlpatterns = [
         views.update_post,
         name='update_post',
     ),
+    path(
+        'api/comment/<slug:post_slug>',
+        views.PublishComment.as_view(),
+        'publish_comment'
+    ),
     path('api/posts', views.BlogsListView.as_view(), name="posts"),
     path('api/sign-up', views.sign_up, name="sign-up"),
     path('api/login', views.login_view, name="login"),
