@@ -150,8 +150,8 @@ class UserAuthDetails(views.APIView):
         return JsonResponse({
             'authenticated': user.is_authenticated,
             'canpost': user.is_staff,
-            'email': user.email,
-            'name': user.__str__(),
+            'email': user.email if user.is_authenticated else "",
+            'name': user.__str__() if user.is_authenticated else "",
         })
 
 
