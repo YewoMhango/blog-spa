@@ -18,7 +18,7 @@ import Pages.Write exposing (viewThumbnailPreview)
 import Request
 import Shared exposing (CSRFToken)
 import Task
-import Utils exposing (RemoteData(..), allNotEmptyStrings, flipBool, httpErrorAsText, renderHttpError, smallLoadingSpinner)
+import Utils exposing (RemoteData(..), allNotEmptyStrings, capitalizeWords, flipBool, httpErrorAsText, renderHttpError, smallLoadingSpinner)
 import View exposing (View)
 
 
@@ -60,6 +60,12 @@ type EditStatus
 
 init : CSRFToken -> Request.With Params -> ( Model, Effect Msg )
 init csrfToken req =
+    let
+        titlePlaceholder =
+            req.params.title
+                |> String.replace "-" " "
+                |> capitalizeWords
+    in
     ( { navbarModel = Navbar.init
       , post = Loading
       , currentTab = Input
@@ -68,7 +74,17 @@ init csrfToken req =
       , newThumbnail = Nothing
       , newThumbnailPreview = ""
       }
-    , Effect.fromCmd <| getPost req.params.title
+    , Effect.batch
+        [ Effect.fromCmd <| getPost req.params.title
+        , Effect.fromCmd <|
+            Shared.updatePageMetadata <|
+                Shared.metadataToJson
+                    { title = "Editing \"" ++ titlePlaceholder ++ "\""
+                    , description = "Editing \"" ++ titlePlaceholder ++ "\""
+                    , image = Shared.defaultPreviewImage
+                    , author = "Yewo Mhango"
+                    }
+        ]
     )
 
 

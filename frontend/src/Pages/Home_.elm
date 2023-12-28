@@ -2,7 +2,7 @@ module Pages.Home_ exposing (Model, Msg, PostDetails, page, postsLoadingAnimatio
 
 import Effect exposing (Effect)
 import Footer
-import Html exposing (Html, a, div, h1, h2, img, main_, p, text)
+import Html exposing (Html, a, div, h1, h2, img, main_, node, p, text)
 import Html.Attributes exposing (class, href, src)
 import Http
 import Json.Decode exposing (Decoder, field, list, map5, string)
@@ -51,7 +51,17 @@ type alias PostDetails =
 init : ( Model, Effect Msg )
 init =
     ( Model Loading Navbar.init
-    , Effect.fromCmd getPosts
+    , Effect.batch
+        [ Effect.fromCmd getPosts
+        , Effect.fromCmd <|
+            Shared.updatePageMetadata <|
+                Shared.metadataToJson
+                    { title = "Yewo's Blog"
+                    , description = "This is the personal blogging site of Yewo Mhango"
+                    , image = Shared.defaultPreviewImage
+                    , author = "Yewo Mhango"
+                    }
+        ]
     )
 
 
@@ -141,6 +151,7 @@ viewPosts postsData =
     main_ [ class "homepage" ]
         [ h1 [ class "heading" ] [ text "Yewo's Blog" ]
         , renderPostsData postsData noPostsToShow
+        , node "meta" [] []
         ]
 
 

@@ -32,7 +32,16 @@ type alias Model =
 
 init : ( Model, Effect Msg )
 init =
-    ( Model Navbar.init, Effect.none )
+    ( Model Navbar.init
+    , Effect.fromCmd <|
+        Shared.updatePageMetadata <|
+            Shared.metadataToJson
+                { title = "404 - Page not found"
+                , description = "Nothing was found at this URL"
+                , image = Shared.defaultPreviewImage
+                , author = "Yewo Mhango"
+                }
+    )
 
 
 

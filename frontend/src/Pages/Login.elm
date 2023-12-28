@@ -52,7 +52,14 @@ init csrfToken =
       , csrfToken = csrfToken
       , loginStatus = EnteringData
       }
-    , Effect.none
+    , Effect.fromCmd <|
+        Shared.updatePageMetadata <|
+            Shared.metadataToJson
+                { title = "Login Page"
+                , description = "Login to my blogging site"
+                , image = Shared.defaultPreviewImage
+                , author = "Yewo Mhango"
+                }
     )
 
 

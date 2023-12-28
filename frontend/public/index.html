@@ -39,6 +39,24 @@
                 app.ports.csrfTokenReciever.send('')
             }
         })
+
+        app.ports.updatePageMetadata.subscribe(function (metadataJson) {
+            const metadata = JSON.parse(metadataJson);
+
+            updateMetaTag("og:url", window.location.href);
+            updateMetaTag("description", metadata.description);
+            updateMetaTag("og:description", metadata.description);
+            updateMetaTag("og:title", metadata.title);
+            updateMetaTag("og:image", window.location.host + metadata.image);
+            updateMetaTag("author", metadata.author);
+        });
+
+        function updateMetaTag(name, content) {
+            const metaTag = document.querySelector(`meta[name="${name}"], meta[property="${name}"]`);
+            if (metaTag) {
+                metaTag.setAttribute("content", content);
+            }
+        }
     </script>
 </body>
 

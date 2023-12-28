@@ -63,8 +63,21 @@ init req =
         }
         params
         req
-    , Effect.fromCmd <|
-        getPosts params
+    , Effect.batch
+        [ Effect.fromCmd <|
+            getPosts params
+        , Effect.fromCmd <|
+            Shared.updatePageMetadata <|
+                Shared.metadataToJson
+                    { title = "Search Page"
+                    , description =
+                        "Search results for \""
+                            ++ (Maybe.withDefault "" <| Url.percentDecode params.searchTerm)
+                            ++ "\""
+                    , image = Shared.defaultPreviewImage
+                    , author = "Yewo Mhango"
+                    }
+        ]
     )
 
 
@@ -164,7 +177,7 @@ view shared model =
             "Search Page"
 
         else
-            "\"" ++ (Maybe.withDefault "" <| Url.percentDecode model.query.searchTerm) ++ "\" - Search Results"
+            "\"" ++ (Maybe.withDefault "" <| Url.percentDecode model.query.searchTerm) ++ "\" - Search results"
     , body =
         [ Navbar.view
             shared
@@ -183,7 +196,7 @@ viewPosts model =
         main_ [ class "search-results" ]
             [ h1 [ class "heading" ]
                 [ text <|
-                    "Search Results for \""
+                    "Search results for \""
                         ++ (Maybe.withDefault "" <| Url.percentDecode model.query.searchTerm)
                         ++ "\""
                 ]

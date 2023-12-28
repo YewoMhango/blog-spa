@@ -12,7 +12,7 @@ import Navbar
 import Page
 import Request
 import Shared
-import Utils exposing (RemoteData(..), renderHttpError)
+import Utils exposing (RemoteData(..), capitalizeWords, renderHttpError)
 import View exposing (View)
 
 
@@ -53,8 +53,24 @@ type alias Post =
 
 init : Request.With Params -> ( Model, Effect Msg )
 init req =
+    let
+        titlePlaceholder =
+            req.params.title
+                |> String.replace "-" " "
+                |> capitalizeWords
+    in
     ( Model Loading req.params.title Navbar.init
-    , Effect.fromCmd <| getPost req.params.title
+    , Effect.batch
+        [ Effect.fromCmd <| getPost req.params.title
+        , Effect.fromCmd <|
+            Shared.updatePageMetadata <|
+                Shared.metadataToJson
+                    { title = titlePlaceholder
+                    , description = titlePlaceholder
+                    , image = Shared.defaultPreviewImage
+                    , author = "Yewo Mhango"
+                    }
+        ]
     )
 
 
@@ -76,17 +92,28 @@ update req_ msg model =
     in
     case msg of
         GotPost result ->
-            ( { model
-                | post =
-                    case result of
-                        Ok post ->
+            case result of
+                Ok post ->
+                    ( { model
+                        | post =
                             Successful post
+                      }
+                    , Effect.fromCmd <|
+                        Shared.updatePageMetadata <|
+                            Shared.metadataToJson
+                                { title = post.title
+                                , description = post.summary
+                                , image = post.image
+                                , author = post.author
+                                }
+                    )
 
-                        Err error ->
-                            Failed error
-              }
-            , Effect.none
-            )
+                Err error ->
+                    ( { model
+                        | post = Failed error
+                      }
+                    , Effect.none
+                    )
 
         NavbarMsg innerMsg ->
             Navbar.update model innerMsg req

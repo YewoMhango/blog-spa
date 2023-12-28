@@ -141,3 +141,18 @@ displayAnimation visible className =
             [ style "display" "none" ]
         )
         []
+
+
+capitalizeWords : String -> String
+capitalizeWords input =
+    String.join " " (List.map capitalizeFirstWord (String.words input))
+
+
+capitalizeFirstWord : String -> String
+capitalizeFirstWord word =
+    case String.uncons word of
+        Just ( first, rest ) ->
+            String.fromChar (Char.toUpper first) ++ rest
+
+        Nothing ->
+            word

@@ -57,7 +57,14 @@ init shared =
       , signupStatus = EnteringData
       , csrfToken = shared.csrfToken
       }
-    , Effect.none
+    , Effect.fromCmd <|
+        Shared.updatePageMetadata <|
+            Shared.metadataToJson
+                { title = "Sign-up Page"
+                , description = "Sign-up to my blogging site"
+                , image = Shared.defaultPreviewImage
+                , author = "Yewo Mhango"
+                }
     )
 
 

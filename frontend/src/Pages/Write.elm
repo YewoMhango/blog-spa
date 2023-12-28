@@ -71,7 +71,14 @@ init csrfToken =
       , publishStatus = Writing
       , csrfToken = csrfToken
       }
-    , Effect.none
+    , Effect.fromCmd <|
+        Shared.updatePageMetadata <|
+            Shared.metadataToJson
+                { title = "Write a New Blog Post"
+                , description = "Write a New Blog Post"
+                , image = Shared.defaultPreviewImage
+                , author = "Yewo Mhango"
+                }
     )
 
 

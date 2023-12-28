@@ -1,17 +1,22 @@
 port module Shared exposing
     ( CSRFToken
     , Flags
+    , Metadata
     , Model
     , Msg(..)
     , User
+    , defaultPreviewImage
     , fetchCsrfToken
     , init
+    , metadataToJson
     , subscriptions
     , update
+    , updatePageMetadata
     )
 
 import Http exposing (stringPart)
 import Json.Decode exposing (bool, field)
+import Json.Encode
 import Request exposing (Request)
 
 
@@ -34,9 +39,17 @@ type alias User =
     { isAuthenticated : Bool, canPost : Bool }
 
 
-loggedOutUser : User
-loggedOutUser =
-    User False False
+type alias Metadata =
+    { title : String
+    , description : String
+    , image : String
+    , author : String
+    }
+
+
+defaultPreviewImage : String
+defaultPreviewImage =
+    "/static/preview-image.jpg"
 
 
 type Msg
@@ -45,6 +58,11 @@ type Msg
     | SignOut
     | SignOutResponse (Result Http.Error ())
     | SetCsrfToken String
+
+
+loggedOutUser : User
+loggedOutUser =
+    User False False
 
 
 init : Request -> Flags -> ( Model, Cmd Msg )
@@ -120,6 +138,20 @@ update _ msg model =
 
         SetCsrfToken token ->
             ( { model | csrfToken = token }, Cmd.none )
+
+
+metadataToJson : Metadata -> String
+metadataToJson metadata =
+    Json.Encode.object
+        [ ( "title", Json.Encode.string metadata.title )
+        , ( "description", Json.Encode.string metadata.description )
+        , ( "image", Json.Encode.string metadata.image )
+        , ( "author", Json.Encode.string metadata.author )
+        ]
+        |> Json.Encode.encode 0
+
+
+port updatePageMetadata : String -> Cmd msg
 
 
 port fetchCsrfToken : () -> Cmd msg
