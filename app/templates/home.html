@@ -15,10 +15,11 @@
 
 {% block body %}
 <main class="homepage">
+    <h1 class="heading">Yewo's Blog</h1>
     <div class="post-list">
         {% for post in posts %}
         <div class="post">
-            <a href="{% url 'view_post_server_side' post.slug %}">
+            <a href="/post/{{post.slug}}">
                 <img class="thumbnail" src="{{ post.thumbnail.url }}" alt="{{ post.title }}">
                 <div class="date">{{ post.date|date:"D d M Y" }}</div>
                 <h2 class="title">{{ post.title }}</h2>

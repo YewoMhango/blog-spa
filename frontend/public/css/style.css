@@ -320,7 +320,7 @@ footer .social-links a img {
   .search-results .post-list {
     display: grid;
     grid-template-columns: 33% 33% 33%;
-    padding: 20px 30px;
+    padding: 0 30px;
   }
 }
 @media screen and (min-width: 1000px) {

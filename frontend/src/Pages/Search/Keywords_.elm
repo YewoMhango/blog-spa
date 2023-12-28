@@ -4,7 +4,7 @@ import Dict
 import Effect exposing (Effect)
 import Footer
 import Gen.Params.Search.Keywords_ exposing (Params)
-import Html exposing (Html, div, h2, main_, p, text)
+import Html exposing (Html, div, h1, main_, p, text)
 import Html.Attributes exposing (class)
 import Http
 import Json.Decode exposing (Decoder, field, map5, string)
@@ -181,7 +181,7 @@ viewPosts : Model -> Html Msg
 viewPosts model =
     if model.query.searchTerm /= "" then
         main_ [ class "search-results" ]
-            [ h2 [ class "heading" ]
+            [ h1 [ class "heading" ]
                 [ text <|
                     "Search Results for \""
                         ++ (Maybe.withDefault "" <| Url.percentDecode model.query.searchTerm)

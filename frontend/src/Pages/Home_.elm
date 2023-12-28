@@ -2,7 +2,7 @@ module Pages.Home_ exposing (Model, Msg, PostDetails, page, postsLoadingAnimatio
 
 import Effect exposing (Effect)
 import Footer
-import Html exposing (Html, a, div, h1, img, main_, p, text)
+import Html exposing (Html, a, div, h1, h2, img, main_, p, text)
 import Html.Attributes exposing (class, href, src)
 import Http
 import Json.Decode exposing (Decoder, field, list, map5, string)
@@ -139,7 +139,8 @@ view shared model =
 viewPosts : RemoteData (List PostDetails) Http.Error -> Html Msg
 viewPosts postsData =
     main_ [ class "homepage" ]
-        [ renderPostsData postsData noPostsToShow
+        [ h1 [ class "heading" ] [ text "Yewo's Blog" ]
+        , renderPostsData postsData noPostsToShow
         ]
 
 
@@ -189,7 +190,7 @@ renderPosts posts =
                 [ a [ href post.url ]
                     [ img [ src post.thumbnail, class "thumbnail" ] []
                     , div [ class "date" ] [ text post.date ]
-                    , h1 [ class "title" ] [ text post.title ]
+                    , h2 [ class "title" ] [ text post.title ]
                     , div [ class "summary" ] [ text post.summary ]
                     ]
                 ]
