@@ -29,7 +29,7 @@ urlpatterns = [
     path(
         'api/comment/<slug:post_slug>',
         views.PublishComment.as_view(),
-        'publish_comment'
+        name='publish_comment'
     ),
     path('api/posts', views.BlogsListView.as_view(), name="posts"),
     path('api/sign-up', views.sign_up, name="sign-up"),
